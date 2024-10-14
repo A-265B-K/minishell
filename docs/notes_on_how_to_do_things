@@ -1,0 +1,26 @@
+A -
+
+B -
+
+C -
+
+D -
+
+E -
+Environmental variables will be handled as an array of structs which contain the key & value of said variables.
+Decide whether to first parse to decide malloc size or remalloc as needed.
+
+F - 
+
+G -
+
+H -
+
+I -
+
+Q - 
+Figure out how quoting works, and make sure different types of quotes are handled correctly.
+
+
+
+
