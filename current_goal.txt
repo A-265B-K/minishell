@@ -1,0 +1,2 @@
+a teeny tiny "working" version that takes input, tokenizes it, shell expands it, and performs the commands.
+everything should just work as an example; meaning, only a small set of pre-decided commands should work.
