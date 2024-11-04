@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   create_token_node.c                                :+:    :+:            */
+/*   token_utils.c                                      :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ebayat <ebayat@student.42.fr>                +#+                     */
+/*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2024/07/26 14:26:42 by ebayat        #+#    #+#                 */
-/*   Updated: 2024/10/20 16:51:57 by alkuijte      ########   odam.nl         */
+/*   Created: 2024/11/04 15:03:03 by alkuijte      #+#    #+#                 */
+/*   Updated: 2024/11/04 17:45:09 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,21 @@ t_token	*new_node(char *str)
 	node = ft_calloc(1, sizeof(t_token));
 	if (!node)
 		return (NULL);
-	node->command = str;
+	node->data = str;
 	node->next = NULL;
 	return (node);
 
 	// ? asign the values immediately or init to NULL and 0s?
+}
+
+void	add_to_back(t_token *node, char *str)
+{
+	if (node == NULL)
+	{
+		node = new_node(str);
+		return ;
+	}
+	while (node->next)
+		node = node->next;
+	node->next = new_node(str);
 }

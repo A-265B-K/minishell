@@ -13,11 +13,14 @@
 #include "../incl/minishell.h"
 
 void	process_input(t_program *program);
-void	tokenize(t_program *program);
 
 void	process_input(t_program *program)
 {
-	tokenize(program);
+	if (program->tokens->data == NULL)
+		return ;
+	if (program->tokens->data[0] == '\0')
+		return ;
+	tokenize(program->tokens);
 	// perform_shell_expansions(program);
 	// deal with redirects
 	printf(">>> Command processed\n");

@@ -1,1 +1,0 @@
-// remove a node and reconnect the other appropriately

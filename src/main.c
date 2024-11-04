@@ -6,7 +6,7 @@
 /*   By: ebayat <ebayat@student.42.fr>                +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/07/24 12:12:05 by ebayat        #+#    #+#                 */
-/*   Updated: 2024/10/20 16:52:13 by alkuijte      ########   odam.nl         */
+/*   Updated: 2024/11/04 17:17:40 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void run_program(t_program *program_data)
 		execute_command(program_data);
 		while(program_data->tokens)
 		{
-			printf("[%s]\n", program_data->tokens->command);
+			printf("[%s]\n", program_data->tokens->data);
 			program_data->tokens = program_data->tokens->next;
 		}
 		// free_everything_for_the_next_input();

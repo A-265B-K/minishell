@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   functions.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ebayat <ebayat@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/25 12:30:07 by ebayat            #+#    #+#             */
-/*   Updated: 2024/09/23 15:56:03 by ebayat           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   functions.h                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ebayat <ebayat@student.42.fr>                +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/07/25 12:30:07 by ebayat        #+#    #+#                 */
+/*   Updated: 2024/11/04 15:06:17 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ void	process_input(t_program *program);
 /* -------------------------------------------------------------------------- */
 /*                                 Tokenizing                                 */
 /* -------------------------------------------------------------------------- */
-void	tokenize(t_program *program);
+void	tokenize(t_token *tokens);
 t_token	*new_node(char *str);
 t_token	*minishell_split(char *str);
+void	add_to_back(t_token *node, char *str);
 
 // is_token
 int	is_operator_token(char *token);

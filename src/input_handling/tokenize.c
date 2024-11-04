@@ -12,26 +12,80 @@
 
 #include "../incl/minishell.h"
 
+/* fix, token point is 0 pointer*/
 
-void	tokenize(t_program *program)
+#define TOKEN_SIZE 64
+
+void	split_input(t_token *tokens, char *user_input)
 {
-	// tokenize should create an array of tokens that are formatted according to quoting rules
-	// envp between 2 " ", will be shell expanded, but not between ' '
+	char *current_token = malloc(TOKEN_SIZE);
+	if (!current_token)
+		return ;
+	ft_bzero(current_token, TOKEN_SIZE);
+	
+	int current_length = 0;
+	int token_size = TOKEN_SIZE;
+	bool single_quote = false;
+	bool double_quote = false;
+	for (int i = 0; user_input[i] != '\0'; i++)
+	{
+		char c = user_input[i];
+		if (c == ' ' && !single_quote && !double_quote)
+		{
+			if (current_length > 0)
+			{
+				add_to_back(tokens, current_token);
+				ft_bzero(current_token, token_size);
+				current_length = 0;
+			}
+		}
+		else if (c == '\'')
+		{
+			if (single_quote && current_length > 0)
+			{
+				printf("something got added\n");
+				add_to_back(tokens, current_token);
+				ft_bzero(current_token, token_size);
+				current_length = 0;
+				single_quote = false;
+				double_quote = false;
+			}
+			else
+				single_quote = true;
+		}
+		else if (c == '\"')
+		{
+			if (double_quote && current_length > 0)
+			{
+				printf("something got added\n");
+				add_to_back(tokens, current_token);
+				ft_bzero(current_token, token_size);
+				current_length = 0;
+				single_quote = false;
+				double_quote = false;
+			}
+			else
+				double_quote = true;
+		}
+		else
+			current_token[current_length++] = c;
+		printf("Current token: %s\n", current_token);
+	}
+	if (current_token[0])
+		add_to_back(tokens, current_token);
+	free(current_token);
+}
 
-	char	*input;
+void	tokenize(t_token *tokens)
+{
+	printf(">>>> TOKENIZED\n");
+	split_input(tokens->next, tokens->data);
+//	add_to_back(tokens, "Hello World");
 
 
-
-
-
-
-	input = program->user_input;
-	// cmds_amount = ft_strlen(split_array);
-	// current_node = program->tokens;
-	program->tokens = minishell_split(program->user_input);
-	// give tokens their types
 
 }
+
 
 // void	link_nodes()
 // {
@@ -42,43 +96,44 @@ void	tokenize(t_program *program)
 // }
 
 
-t_token	*minishell_split(char *str)
-{
-	size_t	start;
-	size_t	end;
-	t_token	*head_node;
-	t_token	*current_node;
-	char	*command;
+// t_token	*minishell_split(char *str)
+// {
+// 	size_t	start;
+// 	size_t	end;
+// 	t_token	*head_node;
+// 	t_token	*current_node;
+// 	char	*command;
 
 
-	start = 0;
+// 	start = 0;
 
-	head_node = malloc(sizeof(t_token*));
-	current_node = malloc(sizeof(t_token*));
+// 	head_node = malloc(sizeof(t_token*));
+// 	current_node = malloc(sizeof(t_token*));
 
-	start = 0;
-	end = start;
-	while (str[end] && !is_operator_token(&str[end]))
-		end++;
+// 	start = 0;
+// 	end = start;
+// 	while (str[end] && !is_operator_token(&str[end]))
+// 		end++;
 
-	head_node->command = ft_strndup(&str[start], end - start);
-	start = end;
-	current_node = head_node;
+// 	head_node->command = ft_strndup(&str[start], end - start);
+// 	start = end;
+// 	current_node = head_node;
 
-	while (str[start])
-	{
-		while (str[start] && is_operator_token(&str[start]))
-			start++;
-		end = start;
-		while (str[end] && !is_operator_token(&str[end]))
-			end++;
-		command = strndup(&str[start], end - start);
-		current_node->next = new_node(command);
-		free(command);
-		start = end;
-		current_node->next->previous = current_node;
-		current_node = current_node->next;
+// 	while (str[start])
+// 	{
+// 		while (str[start] && is_operator_token(&str[start]))
+// 			start++;
+// 		end = start;
+// 		while (str[end] && !is_operator_token(&str[end]))
+// 			end++;
+// 		command = strndup(&str[start], end - start);
+// 		current_node->next = new_node(command);
+// 		free(command);
+// 		start = end;
+// 		current_node->next->previous = current_node;
+// 		current_node = current_node->next;
 
-	}
-	return (head_node);
-}
+// 	}
+// 	return (head_node);
+// }
+
