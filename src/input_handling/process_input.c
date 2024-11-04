@@ -1,31 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_exit.c                                   :+:      :+:    :+:   */
+/*   process_input.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebayat <ebayat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/26 14:53:38 by ebayat            #+#    #+#             */
-/*   Updated: 2024/08/08 11:59:23 by ebayat           ###   ########.fr       */
+/*   Created: 2024/07/26 14:42:31 by ebayat            #+#    #+#             */
+/*   Updated: 2024/08/02 15:40:26 by ebayat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../incl/minishell.h"
 
-void	minishell_exit(t_program *program_data);
+void	process_input(t_program *program);
+void	tokenize(t_program *program);
 
-void	minishell_exit(t_program *program_data)
+void	process_input(t_program *program)
 {
-	// free(program_data->user_input);
-	// program_data->user_input = NULL;
-	(void)program_data;
-	printf(">>> EXITING\n");
-	exit(errno);
+	tokenize(program);
+	// perform_shell_expansions(program);
+	// deal with redirects
+	printf(">>> Command processed\n");
 }
 
-// void	minishell_free_all(t_program *program_data)
-// {
-// 	// free prompt_symbol
-// 	// free user_input
-// 	// free tokens
-// }

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../incl/minishell.h"
 
 void get_user_input(t_program *program_data)
 {

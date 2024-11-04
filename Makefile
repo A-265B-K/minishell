@@ -1,38 +1,55 @@
-NAME			= minishell
-CFLAGS			= -Wextra -Wall -Werror -Wunreachable-code -g
-LIBFT			= ./libft
-BUILD_DIR		= ./build
-SRC_DIR			= ./src
-HEADERS			= -I ./inc -I $(LIBFT)/inc
-LIBS			= $(LIBFT)/build/libft.a
-SOURCE_FILES	= $(wildcard $(SRC_DIR)/*.c)
-OBJECT_FILES	= $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SOURCE_FILES))
+BLACK     	= \033[30m
+RED_B		= \033[41m
+WHITE  		= \033[97m
+RESET   	= \033[0m
 
-all: libft $(NAME)
+NAME	= minishell
+CC		= cc
+CFLAGS	= -Werror -Wextra -Wall -Wunreachable-code -march=native -g
+INC		= -I ./incl/
+SRC_PATH	= src/
+SRC 		= $(wildcard $(SRC_PATH)*/*.c) $(wildcard $(SRC_PATH)/*.c)
 
-libft:
-	make -C $(LIBFT)
+OBJ_PATH	= obj/
+OBJ 		= $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))  
 
-$(NAME): $(OBJECT_FILES)
-	@$(CC) $(OBJECT_FILES) $(LIBS) $(HEADERS) -lreadline -o $(NAME)
+LIBFT_PATH	= libft/
+LIBFT		= $(LIBFT_PATH)build/libft.a
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) && printf "Compiling: $(notdir $<)\n"
+COMPILED    = 0
+
+all: $(NAME)
+	@if [ "$(COMPILED)" -eq 0 ]; then \
+		echo "$(RED_B) $(WHITE)Nothing to be done for 'all'$(RESET)"; \
+	fi
+                                                                                                                                                                                           
+$(OBJ_PATH)%.o: $(SRC_PATH)%.c | $(OBJ_PATH)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
+	@$(eval COMPILED=1)
+
+$(OBJ_PATH):
+	@mkdir -p $(OBJ_PATH)
+
+$(LIBFT):
+	@$(MAKE) -C $(LIBFT_PATH)
+
+$(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(INC) $(LIBFT) -lreadline -lXext -lX11 -lm
+	@if [ $(COMPILED) -eq 1 ]; then \
+		echo "$(RED_B) $(WHITE)Compiled $(NAME) $(RESET)"; \
+	fi
+
+bonus: all
 
 clean:
-	@rm -rf $(OBJECT_FILES)
+	@rm -rf $(OBJ_PATH)
+	@echo "$(RED_B) $(WHITE)Cleaned $(NAME) .o files$(RESET)"
 
 fclean: clean
-	@rm -rf $(NAME)
+	@rm -f $(NAME)
+	@echo "$(RED_B) $(WHITE)Removed $(NAME) $(RESET)"
 
 re: fclean all
 
-run: all
-	./$(NAME)
-
-rerun: all fclean
-	make fclean
-	make run
-
-.PHONY: all clean fclean re run libft
+.PHONY: all re clean fclean

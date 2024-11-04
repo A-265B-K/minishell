@@ -10,26 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../incl/minishell.h"
 
-// void	perform_shell_expansions(t_program *program)
-// {
-// 	// create new_str
-// 	// while (command)
-// 	//	if (is_shell_expandable)
-// 	//		copy get_expanded_envp()
-// 	//	copy command
-// 	//	node->command = new_str
-// }
-
-// void	is_shell_expandable()
-// {
-// 	// checks if there's something to expand
-// }
-
-// void	get_expanded_envp()
-// {
-// 	// searches the env for the correct envp
-// 	// return the value
-// }
-
+// while(tokens)
+//	if (is_redirect)
+//		get the operator token
+//		get redirect destination from token->next 
+//		adapt node redication to node that would be redirected

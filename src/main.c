@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ebayat <ebayat@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/24 12:12:05 by ebayat            #+#    #+#             */
-/*   Updated: 2024/08/08 12:07:13 by ebayat           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ebayat <ebayat@student.42.fr>                +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/07/24 12:12:05 by ebayat        #+#    #+#                 */
+/*   Updated: 2024/10/20 16:52:13 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../incl/minishell.h"
 
 void	init_program(t_program *program_data, char **envp)
 {
@@ -24,7 +24,7 @@ void	init_program(t_program *program_data, char **envp)
 
 void run_program(t_program *program_data)
 {
-	while(1)
+	while(1) // ? why is this a while(1)?
 	{
 		// check_for_signal_of_parent();
 		get_user_input(program_data);

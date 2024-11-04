@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../incl/minishell.h"
 
 
 void	tokenize(t_program *program)
