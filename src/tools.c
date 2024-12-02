@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:40:38 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/02 13:31:06 by ahornstr         ###   ########.fr       */
+/*   Updated: 2024/12/02 14:39:59 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,16 @@ void	free_double(char **str)
 		i++;
 	}
 	free(str);
+}
+
+char	*free_join(char *s1, char *s2, bool free_s1, bool free_s2)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin(s1, s2);
+	if (free_s2 == true)
+		free(s2);
+	if (free_s1 == true)
+		free(s1);
+	return (tmp);
 }
