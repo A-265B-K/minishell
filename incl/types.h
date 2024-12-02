@@ -48,18 +48,18 @@ typedef enum e_control_states
 typedef struct s_shell
 {
 	char			*prompt;
-	bool			debug;
+	// bool			debug;
 	char			*input;
 	char			**envp;
 	int				exitcode;
 	bool			exit;
-	t_list			*env;
-	t_list			*tokens;
-	t_list			*tasks;
-	int				pipe_fd[2];
-	int				std_fd[2];
-	HIST_ENTRY		**history_entry;
-	HISTORY_STATE	*history_state;
+	// t_list			*env;
+	// t_list			*tokens;
+	// t_list			*tasks;
+	// int				pipe_fd[2];
+	// int				std_fd[2];
+	// HIST_ENTRY		**history_entry;
+	// HISTORY_STATE	*history_state;
 }	t_shell;
 
 #endif

@@ -64,7 +64,9 @@ int		error(char *str);
 void	*mem_add(size_t count, size_t size);
 // void	*ft_realloc(void *ptr, size_t size);
 // char	*free_join(char *s1, char *s2, bool free_s1, bool free_s2);
-
+char	**alloc_double(char **envp);
+int		ft_strarrlen(char **arr);
+void	free_double(char **str);
 // // TOKENIZER
 // // tokenizer/operators.c
 // int		is_operator(char c);
