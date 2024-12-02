@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2024/12/02 14:51:03 by ahornstr         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:23:16 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	main(int argc, char **argv, char **envp)
 	shell = shell_init(envp);
 	while ((shell->input = readline(shell->prompt)) != NULL)
 	{
+		lexer(shell);
 		if (strlen(shell->input) > 0)
 		{
 			add_history(shell->input);

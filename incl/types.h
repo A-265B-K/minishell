@@ -11,6 +11,11 @@ typedef enum e_control_states
 	BUILTIN
 }	t_state;
 
+// typedef enum e_operators
+// {
+	
+// }	t_operators;
+
 // typedef struct s_token
 // {
 // 	char			*raw;

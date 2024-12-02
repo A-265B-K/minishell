@@ -86,6 +86,10 @@ char	*env_get(char *str, char *envp[]);
 // void	free_t_token(void *token);
 // void	tokenizer(t_shell *shell);
 
+// // LEXER
+void	lexer(t_shell *shell);
+
+
 // // SIGNALS
 // // signals/signals.c
 // void	signal_init(void);
