@@ -11,17 +11,43 @@ typedef enum e_control_states
 	BUILTIN
 }	t_state;
 
-// typedef enum e_operators
-// {
-	
-// }	t_operators;
+typedef enum e_operators
+{
+	O_PIPE,
+	O_AND,
+	O_OR,
+	O_LESS,
+	O_DLESS,
+	O_GREAT,
+	O_DGREAT,
+}	t_operators;
 
-// typedef struct s_token
-// {
-// 	char			*raw;
-// 	char			*value;
-// 	t_token_type	token;
-// }	t_token;
+typedef struct s_token
+{
+	char			c;
+	int				id;
+	t_operators		token;
+	struct s_token			*next;
+	struct s_token			*prev;
+}	t_token;
+
+typedef struct s_shell
+{
+	char			*prompt;
+	char			*input;
+	char			**envp;
+	int				exitcode;
+	bool			exit;
+	t_token			*tokenized;
+
+	// t_list			*env;
+	// t_list			*tokens;
+	// t_list			*tasks;
+	// int				pipe_fd[2];
+	// int				std_fd[2];
+	// HIST_ENTRY		**history_entry;
+	// HISTORY_STATE	*history_state;
+}	t_shell;
 
 // typedef struct s_task
 // {
@@ -49,22 +75,5 @@ typedef enum e_control_states
 // 	char			*key;
 // 	char			*value;
 // }	t_env;
-
-typedef struct s_shell
-{
-	char			*prompt;
-	// bool			debug;
-	char			*input;
-	char			**envp;
-	int				exitcode;
-	bool			exit;
-	// t_list			*env;
-	// t_list			*tokens;
-	// t_list			*tasks;
-	// int				pipe_fd[2];
-	// int				std_fd[2];
-	// HIST_ENTRY		**history_entry;
-	// HISTORY_STATE	*history_state;
-}	t_shell;
 
 #endif
