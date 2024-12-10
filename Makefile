@@ -32,7 +32,7 @@ $(OBJ_PATH):
 	@mkdir -p $(OBJ_PATH)
 
 $(LIBFT):
-	@$(MAKE) -C $(LIBFT_PATH)
+	@$(MAKE) bonus -C $(LIBFT_PATH)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(INC) $(LIBFT) -lreadline -lXext -lX11 -lm
@@ -44,6 +44,7 @@ bonus: all
 
 clean:
 	@rm -rf $(OBJ_PATH)
+	@$(MAKE) $(LIBFT_PATH)
 	@echo "$(RED_B) $(WHITE)Cleaned $(NAME) .o files$(RESET)"
 
 fclean: clean
