@@ -35,7 +35,7 @@
 #  include <limits.h>
 # endif
 
-# include "../libft/libft.h"
+# include "../libft/incl/libft.h"
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -43,6 +43,8 @@
 # include "types.h"
 # include "errors.h"
 # include "colors.h"
+# include "functions.h"
+# include "declarations.h"
 
 // MINISHELL
 // minishell.c
