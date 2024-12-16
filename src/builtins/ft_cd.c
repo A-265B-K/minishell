@@ -2,12 +2,13 @@
 
 char *home = NULL;
 
-int	ft_cd(char	*in_operand, int	fd)
+int	ft_cd(int	fd, void *arg)
 {
 	char	curpath[PATH_MAX];
 	char	dir_operand[PATH_MAX];
 	char	temp[PATH_MAX];
 
+	char *in_operand = (char *)arg;
 	ft_bzero(curpath, PATH_MAX);
 	ft_bzero(dir_operand, PATH_MAX);
 	ft_bzero(temp, PATH_MAX);

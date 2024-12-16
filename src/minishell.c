@@ -18,9 +18,14 @@ int	main(int argc, char **argv, char **envp)
 	argv = NULL;
 	argc = 0;
 	char* buf;
-	while ((buf = readline("Shell_template: ")) != NULL) {
-    if (strlen(buf) > 0) 
-      add_history(buf);
-    free(buf);
-  }
+	while ((buf = readline("Shell_template: ")) != NULL)
+	{
+		if (strlen(buf) > 0) 
+		{
+//			printf("%s\n", buf);
+			add_history(buf);
+			function_call(1, buf);
+		}
+		free(buf);
+	}
 }
