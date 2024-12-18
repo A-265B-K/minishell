@@ -18,6 +18,9 @@ int	main(int argc, char **argv, char **envp)
 	argv = NULL;
 	argc = 0;
 	char* buf;
+
+	disable_std_behaviour();
+	signal_handling(1);
 	while ((buf = readline("Shell_template: ")) != NULL)
 	{
 		if (strlen(buf) > 0) 
