@@ -2,23 +2,26 @@
 
 char *home = NULL;
 
-int	ft_cd(int	fd, void *arg)
+int	ft_cd(int	fd, char	**params)
 {
 	char	curpath[PATH_MAX];
 	char	dir_operand[PATH_MAX];
 	char	temp[PATH_MAX];
-
-	char *in_operand = (char *)arg;
+	
 	ft_bzero(curpath, PATH_MAX);
 	ft_bzero(dir_operand, PATH_MAX);
 	ft_bzero(temp, PATH_MAX);
 	// set OLDPWD
-	if ((!in_operand || !in_operand[0]) && !home)
+	if ((!params || !params[0]) && !home)
 		return (1);
-	if (!in_operand)
+	if (params[1])
+	{
+		ft_printf_fd(fd, " too many arguments");
+		return (1);
+	}
+	if (!params)
 		ft_strlcpy(dir_operand, home, PATH_MAX);
-	printf("In operand: %s\n", in_operand);
-	ft_strlcpy(dir_operand, in_operand, PATH_MAX);
+	ft_strlcpy(dir_operand, params[0], PATH_MAX);
 	if (dir_operand[0] == '/')
 		ft_strlcpy(curpath, dir_operand, PATH_MAX);
 	else

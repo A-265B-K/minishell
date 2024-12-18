@@ -13,7 +13,7 @@
 # include <stdbool.h>
 # include <unistd.h>
 # include <stdio.h>
-
+# include <termios.h>
 # include <errno.h>
 
 # include <curses.h>
