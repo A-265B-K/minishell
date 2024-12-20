@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2024/12/02 15:23:16 by ahornstr         ###   ########.fr       */
+/*   Updated: 2024/12/20 13:37:48 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(shell->input);
 			free(shell->input);
 		}
+		parser(shell);
 	}
 	close_shell(shell);
 	return (0);
