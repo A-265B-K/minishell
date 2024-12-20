@@ -74,33 +74,61 @@ static char ***env_holder(void)
 	return (&env);
 }
 
-const char *const
-	*borrow_env(void)
+const char *const *borrow_env(void)
 {
 	return ((const char *const *)*env_holder());
 }
-	
+
+int	valid_identifier_check(const char *name)
+{
+	int	i;
+	int	alph_flag;
+
+	i = -1;
+	alph_flag = 0;
+
+
+	if (!name[0])
+		return (0);
+	while (name[++i])
+	{
+		if ((name[i] >= 'a' && name[i] <= 'z') || (name[i] >= 'A' && name[i] <= 'Z'))
+			alph_flag = 1;
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			return (0);
+	}
+	if (!alph_flag)
+		return (0);
+	return (1);
+}
+
 int ft_setenv(const char *name, const char *value)
 {
-	char ***const	env = env_holder();
+	char ***env_ptr = env_holder();
+	char **env = *env_ptr;
 	char **temp_env;
 	char *new_var;
 	int i;
-	const int array_len = arraylen(*env);
+	int array_len = arraylen(env);
 
-	if (!name)
+	if (!name || !valid_identifier_check(name))
+	{
+		dprintf(2, " not a valid identifier\n");
 		return (1);
+	}
+	if (!value)
+		value = "''";
 	i = -1;
 	while (++i < array_len)
 	{
-		if (strncmp(*env[i], name, strlen(name)) == 0 && *env[i][strlen(name)] == '=')
+		if (strncmp(env[i], name, strlen(name)) == 0)
 		{
 			new_var = malloc(strlen(name) + strlen(value) + 2);
 			if (!new_var)
 				return (1);
 			snprintf(new_var, strlen(name) + strlen(value) + 2, "%s=%s", name, value);
-			free(*env[i]);
-			*env[i] = new_var;
+			free(env[i]);
+			env[i] = new_var;
 			return (0);
 		}
 	}
@@ -109,25 +137,18 @@ int ft_setenv(const char *name, const char *value)
 		return (1);
 	i = -1;
 	while (++i < array_len)
-	{
-		temp_env[i] = strdup(*env[i]);
-		if (!temp_env[i])
-		{
-			free_array(temp_env, array_len + 2);
-			return (1);
-		}
-	}
+		temp_env[i] = env[i];
 	new_var = malloc(strlen(name) + strlen(value) + 2);
 	if (!new_var)
 	{
-		free_array(temp_env, array_len + 2);
+		free(temp_env);
 		return (1);
 	}
 	snprintf(new_var, strlen(name) + strlen(value) + 2, "%s=%s", name, value);
 	temp_env[array_len] = new_var;
 	temp_env[array_len + 1] = NULL;
-	free_array(*env, array_len);
-	*env = temp_env;
+	*env_ptr = temp_env;
+	free(env);
 	return (0);
 }
 
@@ -136,6 +157,8 @@ int	ft_unsetenv(const char *name)
 	int	i;
 	char ***const	env = env_holder();
 
+	if (!name)
+		return (0);
 	i = find_env_index(name);
 	if (i == -1)
 		return (0);
@@ -155,7 +178,7 @@ char	*ft_getenv(const char *name)
 	const char *const *const	env = borrow_env();
 	const char	*env_var;
 	size_t		name_len;
-;
+
 	name_len = ft_strlen(name);
 	i = -1;
 	while (env[++i])
