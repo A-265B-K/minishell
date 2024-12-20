@@ -3,37 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/10 18:01:34 by ahornstr         ###   ########.fr       */
+/*   Updated: 2024/12/20 10:46:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//
-
-t_operators identify_operator(const char *str) 
+t_operators	identify_operator(char c, char c_plus)
 {
-    if (strcmp(str, "|") == 0)
-		return O_PIPE;
-    if (strcmp(str, "&&") == 0)
-		return O_AND;
-    if (strcmp(str, "||") == 0)
-		return O_OR;
-    if (strcmp(str, "<") == 0)
-		return O_LESS;
-    if (strcmp(str, "<<") == 0)
-		return O_DLESS;
-    if (strcmp(str, ">") == 0)
-		return O_GREAT;
-    if (strcmp(str, ">>") == 0)
-		return O_DGREAT;
-    return (-1);
+    if (c == '|' && c_plus == '|')
+		return (O_OR);
+    if (c == '&' && c_plus == '&')
+		return (O_AND);
+    if (c == '<' && c_plus == '<')
+		return (O_DLESS);
+    if (c == '>' && c_plus == '>')
+		return (O_DGREAT);
+    if (c == '|')
+		return (O_PIPE);
+    if (c == '<')
+		return (O_LESS);
+    if (c == '>')
+		return (O_GREAT);
+    return -1;
 }
-
-
 
 int	is_operator(char c)
 {
@@ -42,46 +38,79 @@ int	is_operator(char c)
 	return (0);
 }
 
-char	*check_double_operator(t_shell *shell, int i, char *operator)
+int handle_word(const char *input, int i, t_token **head, int *id)
 {
-	operator[0] = shell->input[i];
-	operator[1] = shell->input[i + 1];
-	return (operator);
+    while (input[i] && !isspace(input[i]) && !is_operator(input[i]) && input[i] != '\'' && input[i] != '"')
+	{
+        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+        i++;
+    }
+    return (i - 1);
 }
 
-void	tokenizer(t_shell *shell)
+int	handle_quotes(const char *input, int start, t_token **head, int *id)
 {
+    char quote_type;
 	int	i;
-	char	*operator;
 	
-	operator = mem_add(sizeof(char), 3);
+	i = start + 1;
+	quote_type = input[start];
+    token_add_back(head, create_token(input[start], (*id)++, O_WORD));
+    while (input[i] && input[i] != quote_type) {
+        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+        i++;
+    }
+    if (input[i] == quote_type)
+        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+    return (i);
+}
+
+int	handle_operator(const char *input, int i, t_token **head, int *id)
+{
+    t_operators op;
+	op = identify_operator(input[i], input[i + 1]);
+    token_add_back(head, create_token((char)input[i], (*id)++, op));
+    if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
+        i++;
+    return (i);
+}
+
+t_token *tokenize_input(const char *input)
+{
+    t_token *head = NULL;
+    int id = 0;
+	int	i;
+	
 	i = 0;
-	while (shell->input[i])
+    while (input[i])
 	{
-		if (is_operator(shell->input[i]))
-		{
-			printf("operator found = %c\n", shell->input[i]);
-			if (is_operator(shell->input[i]) && is_operator(shell->input[i + 1]))
-			{
-				operator = check_double_operator(shell, i, operator);
-				i++;
-				printf("double found = %c%c\n", shell->input[i], shell->input[i + 1]);
-			}
-		}
-		// else if (!isspace(shell->input))
-		// {
-		// 	//create_word();
-		// 	//i += strlen(word? - 1);
-		// }
-		// else
+        if (isspace(input[i]))
+			i++;
+        if (is_operator(input[i]))
+            i = handle_operator(input, i, &head, &id);
+		else if (input[i] == '\'' || input[i] == '"')
+        	i = handle_quotes(input, i, &head, &id);
+		else
+			i = handle_word(input, i, &head, &id);
 		i++;
-		ft_bzero(operator, 3);
-	}
-	free (operator);
-	
+    }
+    return head;
+}
+
+void print_tokens(t_token *head)
+{
+    t_token *temp;
+	temp = head;
+    while (temp)
+	{
+        printf("Char: %c, ID: %d, Token: %d\n", temp->c, temp->id, temp->token);
+        temp = temp->next;
+    }
 }
 
 void	lexer(t_shell *shell)
 {
-	tokenizer(shell);
+	shell->tokenized = tokenize_input(shell->input);
+	print_tokens(shell->tokenized);
+	free_tokens(shell->tokenized);
 }

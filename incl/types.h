@@ -20,6 +20,7 @@ typedef enum e_operators
 	O_DLESS,
 	O_GREAT,
 	O_DGREAT,
+	O_WORD,
 }	t_operators;
 
 typedef struct s_token
