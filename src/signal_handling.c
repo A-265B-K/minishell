@@ -7,7 +7,7 @@ void	handler(int sig, siginfo_t *info, void *context)
 	if (sig == SIGINT)
 		ft_printf_fd(1, "\n"); // Replace with proper printf
 	if (sig == SIGHUP)
-		ft_exit(NULL);
+		ft_exit(NULL, 0);
 }
 
 void	signal_handling(int fd)

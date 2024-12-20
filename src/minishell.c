@@ -18,7 +18,10 @@ int	main(int argc, char **argv, char **envp)
 	argv = NULL;
 	argc = 0;
 	char* buf;
+	t_shell *tstruct;
 
+	tstruct = malloc(sizeof(t_shell));
+	tstruct->exitcode = 0;
 	disable_std_behaviour();
 	signal_handling(1);
 	while ((buf = readline("Shell_template: ")) != NULL)
@@ -27,7 +30,7 @@ int	main(int argc, char **argv, char **envp)
 		{
 //			printf("%s\n", buf);
 			add_history(buf);
-			function_call(1, buf);
+			function_call(1, buf, tstruct);
 		}
 		free(buf);
 	}

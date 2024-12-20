@@ -8,11 +8,13 @@ void	signal_handling(int	fd);
 // Builtins
 int	function_call(int fd, char *parameters, t_shell *tstruct);
 int	ft_cd(int fd, char **params);
-void	ft_exit(char **params);
+void	ft_exit(char **params, int exitcode);
 
 // Environ
 const char *const *borrow_env(void);
 char *ft_getenv(const char *name);
+int	ft_setenv(const char *name, const char *value);
+int	ft_unsetenv(const char *name);
 
 // Terminal
 void	enable_std_behaviour(void);
