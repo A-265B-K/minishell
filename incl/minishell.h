@@ -87,8 +87,24 @@ char	*env_get(char *str, char *envp[]);
 // void	tokenizer(t_shell *shell);
 
 // // LEXER
-void	lexer(t_shell *shell);
+// void	lexer(t_shell *shell);
+// t_operators identify_operator(const char *str);
+// int	is_operator(char c)
 
+// // LEXER V2
+void	lexer(t_shell *shell);
+t_token *tokenize_input(const char *input);
+int	handle_operator(const char *input, int i, t_token **head, int *id);
+int	handle_quotes(const char *input, int start, t_token **head, int *id);
+int handle_word(const char *input, int i, t_token **head, int *id);
+int	is_operator(char c);
+t_operators	identify_operator(char c, char c_plus);
+
+// // LEXER TOOLS
+void	free_tokens(t_token *head);
+void token_add_back(t_token **head, t_token *new_token);
+t_token *create_token(char c, int id, t_operators token);
+void print_tokens(t_token *head);
 
 // // SIGNALS
 // // signals/signals.c
