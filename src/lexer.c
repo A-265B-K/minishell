@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/20 10:46:24 by marvin           ###   ########.fr       */
+/*   Updated: 2024/12/20 14:21:58 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,5 @@ void	lexer(t_shell *shell)
 {
 	shell->tokenized = tokenize_input(shell->input);
 	print_tokens(shell->tokenized);
-	free_tokens(shell->tokenized);
+	// free_tokens(shell->tokenized);
 }
