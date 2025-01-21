@@ -30,8 +30,8 @@ t_shell	*shell_init(char **envp)
 	t_shell *shell;
 	shell = mem_add(1, sizeof(t_shell));
 	shell->envp = alloc_double(envp);
+	// shell->com_struct = mem_add(1, sizeof(shell->com_struct));
 	set_prompt(shell);
-	
 	return (shell);
 }
 
@@ -39,6 +39,8 @@ void	close_shell(t_shell *shell)
 {
 	if (shell->envp)
 		free_double((char **)shell->envp);
+	// if (shell->com_struct)
+	// 	free(shell->com_struct);
 	free (shell);
 }
 
@@ -50,13 +52,11 @@ int	main(int argc, char **argv, char **envp)
 	while ((shell->input = readline(shell->prompt)) != NULL)
 	{
 		lexer(shell);
-		if (strlen(shell->input) > 0)
-		{
+		if (ft_strlen(shell->input) > 0)
 			add_history(shell->input);
-			free(shell->input);
-		}
 		parser(shell);
 	}
+	free(shell->input);
 	close_shell(shell);
 	return (0);
 }
