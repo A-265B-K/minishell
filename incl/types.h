@@ -35,6 +35,8 @@ typedef struct s_lexer_tools
 	int		id;
 	int		mem_size;
 	int		token_len;
+	int		quote_flag;
+	char	quote_type;
 }	t_lexer_tools;
 
 typedef struct s_token
