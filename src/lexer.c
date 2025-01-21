@@ -124,6 +124,8 @@ void init_lexer_tools(t_lexer_tools *tools)
     tools->id = 0;
     tools->mem_size = 0;
     tools->token_len = 0;
+    tools->quote_flag = 0;
+    tools->quote_type = '\0';
 }
 
 void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type)
@@ -140,10 +142,10 @@ void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators t
 
 void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_tools *tools)
 {
-    finalize_token(lexer_grouped, tools, O_G_WORD);
     char    *temp;
 
     temp = NULL;
+    finalize_token(lexer_grouped, tools, O_G_WORD);
     if ((*current)->str && ((*current)->token == O_OR || (*current)->token == O_AND || (*current)->token == O_DGREAT || (*current)->token == O_DLESS))
     {
         temp = ft_strdup((*current)->str);
@@ -179,6 +181,13 @@ void append_to_buffer(t_lexer_tools *tools, char c)
 	tools->buffer[tools->token_len++] = c;
 }
 
+int group_quotes(t_token **current, char c)
+{
+    if (((*current)->c != c))
+        return (1);
+    return (0);
+}
+
 t_token *group_tokens(t_token *lexer_input)
 {
     t_token *lexer_grouped = NULL;
@@ -188,17 +197,37 @@ t_token *group_tokens(t_token *lexer_input)
     init_lexer_tools(&tools);
     while (current)
     {
-        if (isspace(current->c))
+        if(current->c == '\'' || current->c == '\"')
+        {
+            tools.quote_flag = 1;
+            tools.quote_type = current->c;
+            append_to_buffer(&tools, current->c);
+            current = current->next;
+            while (current && group_quotes(&current, tools.quote_type))
+            {
+                append_to_buffer(&tools, current->c);
+                current = current->next;
+            }
+            if(current && (current->c == tools.quote_type || current->c == tools.quote_type))
+            {
+                tools.quote_flag = 0;
+                append_to_buffer(&tools, current->c);
+                finalize_token(&lexer_grouped, &tools, O_G_WORD);
+                current = current->next;
+                continue;
+            }
+        }
+        if (current && isspace(current->c))
         {
             finalize_token(&lexer_grouped, &tools, O_G_WORD);
             current = current->next;
         }
-        else if (is_operator(current->c))
+        else if (current && is_operator(current->c))
         {
             handle_operator_token(&lexer_grouped, &current, &tools);
             current = current->next;
         }
-        else
+        else if (current)
         {
             append_to_buffer(&tools, current->c);
             current = current->next;
@@ -224,6 +253,8 @@ void print_grouped(t_token *head)
 
 void	lexer(t_shell *shell)
 {
+    if(!unclosed_quotes(shell->input))
+        error("Unclosed quotes\n");
 	shell->tokenized = tokenize_input(shell->input);
 	// print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);

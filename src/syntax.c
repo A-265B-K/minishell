@@ -40,6 +40,29 @@ int	operator_check(char *str)
 	return (1);
 }
 
+int unclosed_quotes(const char *input)
+{
+    char open_quote;
+    int i;
+
+    i = 0;
+    open_quote = '\0';
+    while (input[i])
+    {
+        if (input[i] == '\'' || input[i] == '"')
+        {
+            if (open_quote == '\0')
+                open_quote = input[i];
+            else if (open_quote == input[i])
+                open_quote = '\0';
+        }
+        i++;
+    }
+    if (open_quote != '\0')
+        return (0);
+    return (1);
+}
+
 int	operator_placement(t_shell *shell)
 {
 	t_token	*temp;

@@ -106,6 +106,7 @@ void append_to_buffer(t_lexer_tools *tools, char c);
 void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_tools *tools);
 void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type);
 void init_lexer_tools(t_lexer_tools *tools);
+int group_quotes(t_token **current, char c);
 
 // // parser
 void	parser(t_shell *shell);
@@ -117,6 +118,7 @@ t_commands *parse_tokens(t_token *lexer_grouped);
 int	operator_placement(t_shell *shell);
 int	syntax_check(t_shell *shell);
 int	operator_check(char *str);
+int unclosed_quotes(const char *input);
 
 // // parser tools
 void add_command_to_list(t_commands **commands, t_commands *new_command);
