@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/20 14:21:58 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:18:45 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ void append_to_buffer(t_lexer_tools *tools, char c)
 	else
 		tools->buffer = mem_add(tools->mem_size, sizeof(char));
     if (!tools->buffer)
-        return ;
+		return;
 	tools->buffer[tools->token_len++] = c;
 }
 
@@ -251,12 +251,16 @@ void print_grouped(t_token *head)
     }
 }
 
-void	lexer(t_shell *shell)
+int	lexer(t_shell *shell)
 {
     if(!unclosed_quotes(shell->input))
-        error("Unclosed quotes\n");
+	{
+		(error("Unclosed quotes\n"));
+		return (0);
+	}
 	shell->tokenized = tokenize_input(shell->input);
 	// print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);
     print_grouped(shell->lexer_grouped);
+	return (1);
 }

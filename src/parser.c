@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 12:41:34 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/20 14:47:28 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:35:08 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,32 @@ void handle_redirection(t_commands *command, t_token *current)
 
 void free_command_node(t_commands *command)
 {
+	int i;
+
+	i = 0;
     if (!command)
-        return;
-    if (command->str)
-    {
-        for (int i = 0; command->str[i]; i++)
-            free(command->str[i]);
+		return;
+	while(command && command->id != 0)
+	{
+		command = command->prev;
+	}
+	while (command && command->next)
+	{
+   		if (command->str)
+    	{
+        	while (command->str[i])
+			{
+				free(command->str[i]);
+				i++;
+			}
+		}
         free(command->str);
+		if (command->redirection)
+			free(command->redirection);
+    	if (command->builtin)
+			free(command->builtin);
+		command = command->next;
     }
-    if (command->redirection)
-        free(command->redirection);
-    if (command->builtin)
-        free(command->builtin);
     free(command);
 }
 
@@ -95,7 +109,6 @@ t_commands *parse_tokens(t_token *lexer_grouped)
         add_command_to_list(&commands, current_command);
     else
         free_command_node(current_command);
-
     return (commands);
 }
 
@@ -144,5 +157,5 @@ void	parser(t_shell	*shell)
 	}
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
 	print_parser(shell->com_struct);
-	free_tokens(shell->tokenized);
+	
 }

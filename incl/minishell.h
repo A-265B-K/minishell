@@ -50,6 +50,7 @@
 // void	free_t_pipe(void *ptr);
 // int		clean_exit(t_shell *shell);
 int		main(int argc, char **argv, char **envp);
+void	close_shell(t_shell *shell);
 
 // // TOOLS
 // // tools/array.c
@@ -87,7 +88,7 @@ char	*env_get(char *str, char *envp[]);
 // void	tokenizer(t_shell *shell);
 
 // // LEXER
-void	lexer(t_shell *shell);
+int	lexer(t_shell *shell);
 t_token *tokenize_input(const char *input);
 int	handle_operator(const char *input, int i, t_token **head, int *id);
 int	handle_quotes(const char *input, int start, t_token **head, int *id);

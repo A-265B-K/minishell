@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_tools.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:17:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/20 10:40:42 by marvin           ###   ########.fr       */
+/*   Updated: 2025/01/21 15:48:24 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ void token_add_back(t_token **head, t_token *new_token)
 void	free_tokens(t_token *head)
 {
     t_token *temp;
-    while (head) {
+    while (head)
+	{
+		if (head->str)
+			free (head->str);
         temp = head;
         head = head->next;
         free(temp);
