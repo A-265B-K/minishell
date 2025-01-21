@@ -28,7 +28,7 @@ t_operators	identify_operator(char c, char c_plus)
 		return (O_LESS);
     if (c == '>')
 		return (O_GREAT);
-    return -1;
+    return (-1);
 }
 
 int	is_operator(char c)
@@ -42,12 +42,13 @@ int handle_word(const char *input, int i, t_token **head, int *id)
 {
     while (input[i] && !isspace(input[i]) && !is_operator(input[i]) && input[i] != '\'' && input[i] != '"')
 	{
-        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+        token_add_back(head, create_token(NULL, input[i], (*id)++, O_WORD));
         i++;
     }
     return (i - 1);
 }
 
+// this doesnt work anymore
 int	handle_quotes(const char *input, int start, t_token **head, int *id)
 {
     char quote_type;
@@ -55,23 +56,28 @@ int	handle_quotes(const char *input, int start, t_token **head, int *id)
 	
 	i = start + 1;
 	quote_type = input[start];
-    token_add_back(head, create_token(input[start], (*id)++, O_WORD));
+    token_add_back(head, create_token(NULL, input[start], (*id)++, O_WORD));
     while (input[i] && input[i] != quote_type) {
-        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+        token_add_back(head, create_token(NULL, input[i], (*id)++, O_WORD));
         i++;
     }
     if (input[i] == quote_type)
-        token_add_back(head, create_token(input[i], (*id)++, O_WORD));
+        token_add_back(head, create_token(NULL, input[i], (*id)++, O_WORD));
     return (i);
 }
 
 int	handle_operator(const char *input, int i, t_token **head, int *id)
 {
     t_operators op;
+    char    *temp;
+    temp = mem_add(1, 3);
 	op = identify_operator(input[i], input[i + 1]);
-    token_add_back(head, create_token((char)input[i], (*id)++, op));
+    if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
+        temp = ft_strdup(ft_substr(input, i, 2));
+    token_add_back(head, create_token(temp, (char)input[i], (*id)++, op));
     if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
         i++;
+    free (temp);
     return (i);
 }
 
@@ -85,7 +91,11 @@ t_token *tokenize_input(const char *input)
     while (input[i])
 	{
         if (isspace(input[i]))
-			i++;
+        {
+            token_add_back(&head, create_token(NULL, (char)input[i], (id)++, O_SPACE));
+            i++;
+            continue;
+        }
         if (is_operator(input[i]))
             i = handle_operator(input, i, &head, &id);
 		else if (input[i] == '\'' || input[i] == '"')
@@ -94,7 +104,7 @@ t_token *tokenize_input(const char *input)
 			i = handle_word(input, i, &head, &id);
 		i++;
     }
-    return head;
+    return (head);
 }
 
 void print_tokens(t_token *head)
@@ -108,9 +118,114 @@ void print_tokens(t_token *head)
     }
 }
 
+void init_lexer_tools(t_lexer_tools *tools)
+{
+    tools->buffer = NULL;
+    tools->id = 0;
+    tools->mem_size = 0;
+    tools->token_len = 0;
+}
+
+void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type)
+{
+    if (tools->token_len > 0)
+    {
+		if (!tools->buffer)
+			tools->buffer = mem_add(1, 1);
+		tools->buffer[tools->token_len] = '\0';
+        token_add_back(lexer_grouped, create_token(tools->buffer, 0, tools->id++, type));
+        tools->token_len = 0;
+    }
+}
+
+void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_tools *tools)
+{
+    finalize_token(lexer_grouped, tools, O_G_WORD);
+    char    *temp;
+
+    temp = NULL;
+    if ((*current)->str && ((*current)->token == O_OR || (*current)->token == O_AND || (*current)->token == O_DGREAT || (*current)->token == O_DLESS))
+    {
+        temp = ft_strdup((*current)->str);
+        if (!temp)
+            error("malloc error handle operator token\n");
+    }
+    else
+    {
+        temp = mem_add(1, 2);
+        temp[0] = (*current)->c;
+    }
+    token_add_back(lexer_grouped, create_token(temp, 0, tools->id++, identify_operator(temp[0], temp[1])));
+    free (temp);
+}
+
+void append_to_buffer(t_lexer_tools *tools, char c)
+{
+    while (tools->token_len + 1 >= tools->mem_size)
+	{
+		if (tools->mem_size == 0)
+			tools->mem_size += 1;
+		else
+        	tools->mem_size *=2;
+	}
+	if (tools->buffer)
+	{
+        tools->buffer = realloc(tools->buffer, tools->mem_size);
+	}
+	else
+		tools->buffer = mem_add(tools->mem_size, sizeof(char));
+    if (!tools->buffer)
+        return ;
+	tools->buffer[tools->token_len++] = c;
+}
+
+t_token *group_tokens(t_token *lexer_input)
+{
+    t_token *lexer_grouped = NULL;
+    t_token *current = lexer_input;
+    t_lexer_tools tools;
+
+    init_lexer_tools(&tools);
+    while (current)
+    {
+        if (isspace(current->c))
+        {
+            finalize_token(&lexer_grouped, &tools, O_G_WORD);
+            current = current->next;
+        }
+        else if (is_operator(current->c))
+        {
+            handle_operator_token(&lexer_grouped, &current, &tools);
+            current = current->next;
+        }
+        else
+        {
+            append_to_buffer(&tools, current->c);
+            current = current->next;
+        }
+    }
+    finalize_token(&lexer_grouped, &tools, O_G_WORD);
+    free(tools.buffer);
+    return (lexer_grouped);
+}
+
+
+void print_grouped(t_token *head)
+{
+    t_token *temp;
+	temp = head;
+    printf("GROUPED!\n");
+    while (temp)
+	{
+        printf("str: %s, ID: %d, Token: %d\n", temp->str, temp->id, temp->token);
+        temp = temp->next;
+    }
+}
+
 void	lexer(t_shell *shell)
 {
 	shell->tokenized = tokenize_input(shell->input);
-	print_tokens(shell->tokenized);
-	// free_tokens(shell->tokenized);
+	// print_tokens(shell->tokenized);
+    shell->lexer_grouped = group_tokens(shell->tokenized);
+    print_grouped(shell->lexer_grouped);
 }

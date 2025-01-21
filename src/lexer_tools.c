@@ -12,12 +12,17 @@
 
 #include "minishell.h"
 
-t_token *create_token(char c, int id, t_operators token)
+
+t_token *create_token(char *str, char c, int id, t_operators token)
 {
     t_token *new_token;
 	new_token = malloc(sizeof(t_token));
     if (!new_token)
         return NULL;
+    if (str)
+    	new_token->str = ft_strdup(str);
+	else
+		new_token->str = NULL;
     new_token->c = c;
     new_token->id = id;
     new_token->token = token;

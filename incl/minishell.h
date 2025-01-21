@@ -13,7 +13,7 @@
 # include <stdbool.h>
 # include <unistd.h>
 # include <stdio.h>
-
+# include <ctype.h>
 # include <errno.h>
 
 # include <curses.h>
@@ -98,13 +98,31 @@ t_operators	identify_operator(char c, char c_plus);
 // // LEXER TOOLS
 void	free_tokens(t_token *head);
 void token_add_back(t_token **head, t_token *new_token);
-t_token *create_token(char c, int id, t_operators token);
+t_token *create_token(char *str, char c, int id, t_operators token);
 void print_tokens(t_token *head);
+t_token *group_tokens(t_token *lexer_input);
+void print_grouped(t_token *head);
+void append_to_buffer(t_lexer_tools *tools, char c);
+void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_tools *tools);
+void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type);
+void init_lexer_tools(t_lexer_tools *tools);
 
 // // parser
 void	parser(t_shell *shell);
+void handle_redirection(t_commands *command, t_token *current);
+int identify_builtin(t_commands *command, t_token *current);
+t_commands *parse_tokens(t_token *lexer_grouped);
+
+// // syntax checks
 int	operator_placement(t_shell *shell);
 int	syntax_check(t_shell *shell);
+int	operator_check(char *str);
+
+// // parser tools
+void add_command_to_list(t_commands **commands, t_commands *new_command);
+t_commands *create_command_node(int count);
+void free_command_node(t_commands *command);
+
 
 
 

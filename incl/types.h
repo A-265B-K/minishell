@@ -21,16 +21,42 @@ typedef enum e_operators
 	O_GREAT,
 	O_DGREAT,
 	O_WORD,
+	O_SPACE,
+	O_EMPTY,
+	O_G_BUILTIN,
+	O_G_REDIRECT,
+	O_G_WORD,
+	
 }	t_operators;
+
+typedef struct s_lexer_tools
+{
+	char	*buffer;
+	int		id;
+	int		mem_size;
+	int		token_len;
+}	t_lexer_tools;
 
 typedef struct s_token
 {
+	char			*str;
 	char			c;
 	int				id;
 	t_operators		token;
 	struct s_token			*next;
 	struct s_token			*prev;
 }	t_token;
+
+typedef struct s_commands
+{
+	char	**str;
+	char	*builtin;
+	t_token	*tokenized;
+	char	*redirection;
+	int		id;
+	struct	s_commands	*next;
+	struct	s_commands	*prev;
+}	t_commands;
 
 typedef struct s_shell
 {
@@ -40,15 +66,11 @@ typedef struct s_shell
 	int				exitcode;
 	bool			exit;
 	t_token			*tokenized;
-
-	// t_list			*env;
-	// t_list			*tokens;
-	// t_list			*tasks;
-	// int				pipe_fd[2];
-	// int				std_fd[2];
-	// HIST_ENTRY		**history_entry;
-	// HISTORY_STATE	*history_state;
+	t_token			*lexer_grouped;
+	t_commands		*com_struct;
 }	t_shell;
+
+
 
 // typedef struct s_task
 // {

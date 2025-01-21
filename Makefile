@@ -35,7 +35,7 @@ $(LIBFT):
 	@$(MAKE) bonus -C $(LIBFT_PATH)
 
 $(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(INC) $(LIBFT) -lreadline -lXext -lX11 -lm
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(INC) $(LIBFT) -lreadline -lm
 	@if [ $(COMPILED) -eq 1 ]; then \
 		echo "$(RED_B) $(WHITE)Compiled $(NAME) $(RESET)"; \
 	fi

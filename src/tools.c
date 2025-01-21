@@ -75,3 +75,4 @@ char	*free_join(char *s1, char *s2, bool free_s1, bool free_s2)
 		free(s1);
 	return (tmp);
 }
+
