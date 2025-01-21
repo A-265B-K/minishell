@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2024/12/20 13:37:48 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/21 18:12:50 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ void	set_prompt(t_shell *shell)
 	prompt_line = env_get("USER", shell->envp);
 	prompt_line = free_join(prompt_line, " @ ", true, false);
 	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), true, true);
-	prompt_line = ft_strjoin(prompt_line, " :");
-	shell->prompt = prompt_line;
+	prompt_line = free_join(prompt_line, " :", true, false);
+	shell->prompt = ft_strdup(prompt_line);
+	free (prompt_line);
 }
 
 t_shell	*shell_init(char **envp)
@@ -37,11 +38,20 @@ t_shell	*shell_init(char **envp)
 
 void	close_shell(t_shell *shell)
 {
-	if (shell->envp)
-		free_double((char **)shell->envp);
-	// if (shell->com_struct)
-	// 	free(shell->com_struct);
-	free (shell);
+	if (shell)
+	{
+		if (shell->envp)
+			free_double((char **)shell->envp);
+		if (shell->input)
+			free(shell->input);
+		if (shell->prompt)
+			free(shell->prompt);
+		if (shell->com_struct)
+				free_command_node(shell->com_struct);
+		if (shell->lexer_grouped)
+				free_tokens(shell->lexer_grouped);
+		free (shell);
+	}
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -51,12 +61,15 @@ int	main(int argc, char **argv, char **envp)
 	shell = shell_init(envp);
 	while ((shell->input = readline(shell->prompt)) != NULL)
 	{
-		lexer(shell);
+		if (!lexer(shell))
+		{
+			continue;
+		}
 		if (ft_strlen(shell->input) > 0)
 			add_history(shell->input);
 		parser(shell);
+		printf("{{{execute}}}\n");	
 	}
-	free(shell->input);
 	close_shell(shell);
 	return (0);
 }

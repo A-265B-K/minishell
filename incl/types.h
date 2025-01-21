@@ -60,6 +60,13 @@ typedef struct s_commands
 	struct	s_commands	*prev;
 }	t_commands;
 
+typedef struct s_error
+{
+	char	*error_message;
+	int		exitcode;
+	bool	exit;
+}	t_error;
+
 typedef struct s_shell
 {
 	char			*prompt;
@@ -67,6 +74,7 @@ typedef struct s_shell
 	char			**envp;
 	int				exitcode;
 	bool			exit;
+	t_error			*error;
 	t_token			*tokenized;
 	t_token			*lexer_grouped;
 	t_commands		*com_struct;

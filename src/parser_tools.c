@@ -5,7 +5,7 @@ t_commands *create_command_node(int count)
 {
     t_commands *new_command = malloc(sizeof(t_commands));
     if (!new_command)
-        return NULL;
+		return NULL;
 	new_command->id = count;
     new_command->str = NULL;
     new_command->builtin = NULL;

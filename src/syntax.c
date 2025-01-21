@@ -19,6 +19,26 @@ int	syntax_check(t_shell *shell)
 	return (0);
 }
 
+
+
+// int	builtin_count(t_shell *shell)
+// {
+// 	t_token *temp;
+// 	temp = shell->lexer_grouped;
+// 	int	count;
+
+// 	count = 0;
+// 	while (temp->id != 0)
+// 	{
+// 		temp = temp->prev;
+// 	}
+// 	while (temp && temp->next)
+// 	{
+// 		while (temp->str)
+// 	}
+
+// }
+
 int	operator_check(char *str)
 {
 	int	i;
