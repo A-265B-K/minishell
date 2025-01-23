@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 12:41:34 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/01/21 16:35:08 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/23 19:33:55 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,12 +142,68 @@ void	print_parser(t_commands *commands)
     }
 }
 
+char	*search_env(char **env, char *target)
+{
+	int	i;
+	int	len;
+	int	e_len;
+	i = 0;
+	
+	len = ft_strlen(target);
+	while (env[i])
+	{
+		if (!ft_strncmp(env[i], target, len))
+		{
+			e_len = ft_strlen(env[i]);
+			return (ft_substr(env[i], len + 1, e_len - (len + 1)));
+		}
+		i++;
+	}
+	return (NULL);
+	
+}
+
+// change to get_env and not the struct envp** --> after merge
+void	get_env_var(t_shell *shell, t_commands *com_struct)
+{
+	char	*buffer;
+	int	i;
+	
+	buffer = NULL;
+	i = 0;
+	while (com_struct)
+    {
+		if (com_struct->str)
+		{
+			while (com_struct->str[i])
+			{
+				if (com_struct->str[i][0] == '$')
+				{
+					buffer = ft_substr(com_struct->str[i], 1, ft_strlen(com_struct->str[i]));
+					free (com_struct->str[i]);
+					com_struct->str[i] = ft_strdup(search_env(shell->envp, buffer));
+					if (!com_struct->str[i])
+						perror("malloc get_env_var --> substr return");
+				}
+				if (buffer)
+					free (buffer);
+				i++;
+			}
+		}
+		com_struct = com_struct->next;
+    }
+	while (com_struct)
+	{
+		com_struct = com_struct->prev;
+	}
+}
+
 // to do parser
-// Environment variables, pretty easy leave till last maybe
 // heredoc support
 // add more syntax checks
-// builtin flags manually?
+
 // error handling for the whole project.
+// Check if all quotes work !
 
 void	parser(t_shell	*shell)
 {
@@ -156,6 +212,7 @@ void	parser(t_shell	*shell)
 		printf("SYNTAX VALID\n");
 	}
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
+	get_env_var(shell, shell->com_struct);
 	print_parser(shell->com_struct);
 	
 }

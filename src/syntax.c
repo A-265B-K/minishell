@@ -98,9 +98,9 @@ int	operator_placement(t_shell *shell)
 		error("syntax error near unexpected token");
 	while (temp)
 	{
-		if (is_operator(temp->c))
+		if (is_f_operator(temp->c))
 		{
-			if ((is_operator(temp->c) && !temp->next) || (is_operator(temp->c) && temp->id == 0))
+			if ((is_f_operator(temp->c) && !temp->next) || (is_f_operator(temp->c) && temp->id == 0))
 			{
 				error("syntax error near unexpected token\n");
 				return (1);

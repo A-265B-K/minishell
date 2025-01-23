@@ -108,6 +108,8 @@ void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_t
 void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type);
 void init_lexer_tools(t_lexer_tools *tools);
 int group_quotes(t_token **current, char c);
+int is_f_operator(char c);
+char	*search_env(char **env, char *target);
 
 // // parser
 void	parser(t_shell *shell);
