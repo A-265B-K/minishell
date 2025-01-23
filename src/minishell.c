@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/01/21 18:12:50 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/23 19:14:28 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,19 @@ int	main(int argc, char **argv, char **envp)
 	shell = shell_init(envp);
 	while ((shell->input = readline(shell->prompt)) != NULL)
 	{
+		if (!ft_strncmp(shell->input, "shellleak", 9))
+			break ;
 		if (!lexer(shell))
 		{
 			continue;
 		}
+		if (!ft_strncmp(shell->input, "lexerleak", 9))
+			break ;
 		if (ft_strlen(shell->input) > 0)
 			add_history(shell->input);
 		parser(shell);
+		if (!ft_strncmp(shell->input, "parserleak", 10))
+			break ;
 		printf("{{{execute}}}\n");	
 	}
 	close_shell(shell);

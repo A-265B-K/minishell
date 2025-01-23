@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/01/21 16:18:45 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/01/23 19:11:25 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,21 @@ t_operators	identify_operator(char c, char c_plus)
 		return (O_LESS);
     if (c == '>')
 		return (O_GREAT);
+	// if (c == '$')
+	// 	return (O_ENVV);
     return (-1);
 }
 
 int	is_operator(char c)
 {
-	if (c == '|' || c == ';' || c == '<' || c == '>' || c == '&')
+	if (c == '|' || c == '<' || c == '>' || c == '&')
+		return (1);
+	return (0);
+}
+
+int is_f_operator(char c)
+{
+	if (c == '|' || c == '<' || c == '>')
 		return (1);
 	return (0);
 }

@@ -26,7 +26,8 @@ typedef enum e_operators
 	O_G_BUILTIN,
 	O_G_REDIRECT,
 	O_G_WORD,
-	
+	O_ENVV,
+
 }	t_operators;
 
 typedef struct s_lexer_tools
