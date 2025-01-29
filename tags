@@ -1,0 +1,249 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/alkuijte/Desktop/minishell3/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+$(LIBFT)	Makefile	/^$(LIBFT):$/;"	t
+$(NAME)	Makefile	/^$(NAME): $(LIBFT) $(OBJ_PATH) $(OBJ)$/;"	t
+$(NAME)	libft/Makefile	/^$(NAME): $(OBJS)$/;"	t
+$(OBJ_PATH)	Makefile	/^$(OBJ_PATH):$/;"	t
+$(OBJ_PATH)%.o	Makefile	/^$(OBJ_PATH)%.o: $(SRC_PATH)%.c | $(OBJ_PATH)$/;"	t
+%.o	libft/Makefile	/^%.o: %.c $(HEADER)$/;"	t
+BLACK	Makefile	/^BLACK     	= \\033[30m$/;"	m
+BUILTIN	incl/types.h	/^	BUILTIN$/;"	e	enum:e_control_states
+Bonus	minishell_tester/README.md	/^# Bonus $/;"	c
+CC	Makefile	/^CC		= cc$/;"	m
+CC	libft/Makefile	/^CC = gcc$/;"	m
+CD_ERR	incl/errors.h	/^# define CD_ERR /;"	d
+CFLAGS	Makefile	/^CFLAGS	= -Werror -Wextra -Wall -Wunreachable-code -march=native -g$/;"	m
+CFLAGS	libft/Makefile	/^CFLAGS = -Wall -Werror -Wextra$/;"	m
+COMPILED	Makefile	/^COMPILED    = 0$/;"	m
+CONTINUE	incl/types.h	/^	CONTINUE,$/;"	e	enum:e_control_states
+DEBUG	incl/minishell.h	/^#  define DEBUG /;"	d
+ERRORS_H	incl/errors.h	/^# define ERRORS_H$/;"	d
+ERR_HISTORY	incl/errors.h	/^# define ERR_HISTORY /;"	d
+ERR_MALLOC	incl/errors.h	/^# define ERR_MALLOC /;"	d
+ERR_READLINE	incl/errors.h	/^# define ERR_READLINE /;"	d
+ERR_UNKOWN	incl/errors.h	/^# define ERR_UNKOWN /;"	d
+EXIT	incl/types.h	/^	EXIT,$/;"	e	enum:e_control_states
+EXTERNAL	incl/types.h	/^	EXTERNAL,$/;"	e	enum:e_control_states
+EXTRA	incl/minishell.h	/^#  define EXTRA /;"	d
+Extra tests	minishell_tester/README.md	/^# Extra tests$/;"	c
+HEADER	libft/Makefile	/^HEADER = libft.h$/;"	m
+How to run	minishell_tester/README.md	/^# How to run $/;"	c
+INC	Makefile	/^INC		= -I .\/incl\/$/;"	m
+Installation	minishell_tester/README.md	/^# Installation $/;"	c
+LIBFT	Makefile	/^LIBFT		= $(LIBFT_PATH)\/libft.a$/;"	m
+LIBFT_H	libft/libft.h	/^# define LIBFT_H$/;"	d
+LIBFT_PATH	Makefile	/^LIBFT_PATH	= libft\/$/;"	m
+MINISHELL_H	incl/minishell.h	/^# define MINISHELL_H$/;"	d
+Manual tests	minishell_tester/README.md	/^# Manual tests $/;"	c
+NAME	Makefile	/^NAME	= minishell$/;"	m
+NAME	libft/Makefile	/^NAME = libft.a$/;"	m
+OBJ	Makefile	/^OBJ 		= $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))  $/;"	m
+OBJS	libft/Makefile	/^OBJS = $(SRC:.c=.o)$/;"	m
+OBJSB	libft/Makefile	/^OBJSB = $(SRCB:.c=.o)$/;"	m
+OBJ_PATH	Makefile	/^OBJ_PATH	= obj\/$/;"	m
+O_AND	incl/types.h	/^	O_AND,$/;"	e	enum:e_operators
+O_DGREAT	incl/types.h	/^	O_DGREAT,$/;"	e	enum:e_operators
+O_DLESS	incl/types.h	/^	O_DLESS,$/;"	e	enum:e_operators
+O_EMPTY	incl/types.h	/^	O_EMPTY,$/;"	e	enum:e_operators
+O_GREAT	incl/types.h	/^	O_GREAT,$/;"	e	enum:e_operators
+O_G_BUILTIN	incl/types.h	/^	O_G_BUILTIN,$/;"	e	enum:e_operators
+O_G_REDIRECT	incl/types.h	/^	O_G_REDIRECT,$/;"	e	enum:e_operators
+O_G_WORD	incl/types.h	/^	O_G_WORD,$/;"	e	enum:e_operators
+O_LESS	incl/types.h	/^	O_LESS,$/;"	e	enum:e_operators
+O_OR	incl/types.h	/^	O_OR,$/;"	e	enum:e_operators
+O_PIPE	incl/types.h	/^	O_PIPE,$/;"	e	enum:e_operators
+O_SPACE	incl/types.h	/^	O_SPACE,$/;"	e	enum:e_operators
+O_WORD	incl/types.h	/^	O_WORD,$/;"	e	enum:e_operators
+RED_B	Makefile	/^RED_B		= \\033[41m$/;"	m
+RESET	Makefile	/^RESET   	= \\033[0m$/;"	m
+SRC	Makefile	/^SRC 		= $(wildcard $(SRC_PATH)*\/*.c) $(wildcard $(SRC_PATH)\/*.c)$/;"	m
+SRC	libft/Makefile	/^SRC = \\$/;"	m
+SRCB	libft/Makefile	/^SRCB = \\$/;"	m
+SRC_PATH	Makefile	/^SRC_PATH	= src\/$/;"	m
+Separate tests	minishell_tester/README.md	/^# Separate tests$/;"	c
+TYPES_H	incl/types.h	/^# define TYPES_H$/;"	d
+WHITE	Makefile	/^WHITE  		= \\033[97m$/;"	m
+add_command_to_list	src/parser_tools.c	/^void add_command_to_list(t_commands **commands, t_commands *new_command)$/;"	f	typeref:typename:void
+all	Makefile	/^all: $(NAME)$/;"	t
+all	libft/Makefile	/^all: $(NAME)$/;"	t
+alloc_double	src/tools.c	/^char	**alloc_double(char **envp)$/;"	f	typeref:typename:char **
+append_to_buffer	src/lexer.c	/^void append_to_buffer(t_lexer_tools *tools, char c)$/;"	f	typeref:typename:void
+arraylen	src/ft_environ.c	/^int	arraylen(char **array)$/;"	f	typeref:typename:int
+bonus	Makefile	/^bonus: all$/;"	t
+bonus	libft/Makefile	/^bonus: $(OBJS) $(OBJSB)$/;"	t
+borrow_env	src/ft_environ.c	/^const char *const *borrow_env(void)$/;"	f	typeref:typename:const char * const *
+buffer	incl/types.h	/^	char	*buffer;$/;"	m	struct:s_lexer_tools	typeref:typename:char *
+builtin	incl/types.h	/^	char	*builtin;$/;"	m	struct:s_commands	typeref:typename:char *
+c	incl/types.h	/^	char			c;$/;"	m	struct:s_token	typeref:typename:char
+clean	Makefile	/^clean:$/;"	t
+clean	libft/Makefile	/^clean:$/;"	t
+close_shell	src/minishell.c	/^void	close_shell(t_shell *shell)$/;"	f	typeref:typename:void
+com_struct	incl/types.h	/^	t_commands		*com_struct;$/;"	m	struct:s_shell	typeref:typename:t_commands *
+content	libft/libft.h	/^	void			*content;$/;"	m	struct:s_list	typeref:typename:void *
+create_command_node	src/parser_tools.c	/^t_commands *create_command_node(int count)$/;"	f	typeref:typename:t_commands *
+create_token	src/lexer_tools.c	/^t_token *create_token(char *str, char c, int id, t_operators token)$/;"	f	typeref:typename:t_token *
+e_control_states	incl/types.h	/^typedef enum e_control_states$/;"	g
+e_operators	incl/types.h	/^typedef enum e_operators$/;"	g
+env_get	src/env.c	/^char	*env_get(char *str, char *envp[])$/;"	f	typeref:typename:char *
+env_holder	src/ft_environ.c	/^static char ***env_holder(void)$/;"	f	typeref:typename:char ***	file:
+envp	incl/types.h	/^	char			**envp;$/;"	m	struct:s_shell	typeref:typename:char **
+error	incl/types.h	/^	t_error			*error;$/;"	m	struct:s_shell	typeref:typename:t_error *
+error	src/error.c	/^int	error(char *str)$/;"	f	typeref:typename:int
+error_message	incl/types.h	/^	char	*error_message;$/;"	m	struct:s_error	typeref:typename:char *
+execute	src/execution.c	/^int	execute(t_shell *shell)$/;"	f	typeref:typename:int
+execute_builtin	src/execution.c	/^void	execute_builtin(t_shell *shell, t_commands *cmd)$/;"	f	typeref:typename:void
+execute_cmd	src/execution.c	/^int	execute_cmd(t_shell *shell, t_commands *cmd)$/;"	f	typeref:typename:int
+exit	incl/types.h	/^	bool			exit;$/;"	m	struct:s_shell	typeref:typename:bool
+exit	incl/types.h	/^	bool	exit;$/;"	m	struct:s_error	typeref:typename:bool
+exitcode	incl/types.h	/^	int				exitcode;$/;"	m	struct:s_shell	typeref:typename:int
+exitcode	incl/types.h	/^	int		exitcode;$/;"	m	struct:s_error	typeref:typename:int
+fclean	Makefile	/^fclean: clean$/;"	t
+fclean	libft/Makefile	/^fclean: clean$/;"	t
+files.associations	.vscode/settings.json	/^	"files.associations": {$/;"	o
+finalize_token	src/lexer.c	/^void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type)$/;"	f	typeref:typename:void
+find_env_index	src/ft_environ.c	/^static int	find_env_index(const char *name)$/;"	f	typeref:typename:int	file:
+free_array	src/ft_environ.c	/^void	free_array(char **array, int len)$/;"	f	typeref:typename:void
+free_command_node	src/parser.c	/^void free_command_node(t_commands *command)$/;"	f	typeref:typename:void
+free_double	src/tools.c	/^void	free_double(char **str)$/;"	f	typeref:typename:void
+free_join	src/tools.c	/^char	*free_join(char *s1, char *s2, bool free_s1, bool free_s2)$/;"	f	typeref:typename:char *
+free_tokens	src/lexer_tools.c	/^void	free_tokens(t_token *head)$/;"	f	typeref:typename:void
+ft_arraycopy	src/ft_environ.c	/^char **ft_arraycopy(char **array)$/;"	f	typeref:typename:char **
+ft_atoi	libft/ft_atoi.c	/^int	ft_atoi(const char *nptr)$/;"	f	typeref:typename:int
+ft_bzero	libft/ft_bzero.c	/^void	ft_bzero(void *s, size_t n)$/;"	f	typeref:typename:void
+ft_calloc	libft/ft_calloc.c	/^void	*ft_calloc(size_t nmemb, size_t size)$/;"	f	typeref:typename:void *
+ft_cd	src/builtins.c	/^int	ft_cd(char	**params)$/;"	f	typeref:typename:int
+ft_echo	src/builtins.c	/^int ft_echo(char **params, t_shell *shell)$/;"	f	typeref:typename:int
+ft_env	src/builtins.c	/^int	ft_env()$/;"	f	typeref:typename:int
+ft_exit	src/builtins.c	/^void	ft_exit(char **params, int exitcode)$/;"	f	typeref:typename:void
+ft_export	src/builtins.c	/^int	ft_export(char **params)$/;"	f	typeref:typename:int
+ft_free	libft/ft_split.c	/^static void	ft_free(char **strs)$/;"	f	typeref:typename:void	file:
+ft_getenv	src/ft_environ.c	/^char	*ft_getenv(const char *name)$/;"	f	typeref:typename:char *
+ft_isalnum	libft/ft_isalnum.c	/^int	ft_isalnum(int c)$/;"	f	typeref:typename:int
+ft_isalpha	libft/ft_isalpha.c	/^int	ft_isalpha(int c)$/;"	f	typeref:typename:int
+ft_isascii	libft/ft_isascii.c	/^int	ft_isascii(int c)$/;"	f	typeref:typename:int
+ft_isdigit	libft/ft_isdigit.c	/^int	ft_isdigit(int c)$/;"	f	typeref:typename:int
+ft_isprint	libft/ft_isprint.c	/^int	ft_isprint(int c)$/;"	f	typeref:typename:int
+ft_isstrnum	src/builtins.c	/^int	ft_isstrnum(char *str)$/;"	f	typeref:typename:int
+ft_itoa	libft/ft_itoa.c	/^char	*ft_itoa(int n)$/;"	f	typeref:typename:char *
+ft_leng	libft/ft_itoa.c	/^static int	ft_leng(int nb)$/;"	f	typeref:typename:int	file:
+ft_loc	libft/ft_split.c	/^static char	*ft_loc(const char *s, char c)$/;"	f	typeref:typename:char *	file:
+ft_lstadd_back	libft/ft_lstadd_back.c	/^void	ft_lstadd_back(t_list **lst, t_list *new)$/;"	f	typeref:typename:void
+ft_lstadd_front	libft/ft_lstadd_front.c	/^void	ft_lstadd_front(t_list **lst, t_list *new)$/;"	f	typeref:typename:void
+ft_lstclear	libft/ft_lstclear.c	/^void	ft_lstclear(t_list **lst, void (*del)(void *))$/;"	f	typeref:typename:void
+ft_lstdelone	libft/ft_lstdelone.c	/^void	ft_lstdelone(t_list *lst, void (*del)(void *))$/;"	f	typeref:typename:void
+ft_lstiter	libft/ft_lstiter.c	/^void	ft_lstiter(t_list *lst, void (*f)(void *))$/;"	f	typeref:typename:void
+ft_lstlast	libft/ft_lstlast.c	/^t_list	*ft_lstlast(t_list *lst)$/;"	f	typeref:typename:t_list *
+ft_lstmap	libft/ft_lstmap.c	/^t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))$/;"	f	typeref:typename:t_list *
+ft_lstnew	libft/ft_lstnew.c	/^t_list	*ft_lstnew(void *content)$/;"	f	typeref:typename:t_list *
+ft_lstsize	libft/ft_lstsize.c	/^int	ft_lstsize(t_list *lst)$/;"	f	typeref:typename:int
+ft_memchr	libft/ft_memchr.c	/^void	*ft_memchr(const void *s, int c, size_t n)$/;"	f	typeref:typename:void *
+ft_memcmp	libft/ft_memcmp.c	/^int	ft_memcmp(const void *s1, const void *s2, size_t n)$/;"	f	typeref:typename:int
+ft_memcpy	libft/ft_memcpy.c	/^void	*ft_memcpy(void *dest, const void *src, size_t n)$/;"	f	typeref:typename:void *
+ft_memmove	libft/ft_memmove.c	/^void	*ft_memmove(void *dest, const void *src, size_t n)$/;"	f	typeref:typename:void *
+ft_memset	libft/ft_memset.c	/^void	*ft_memset(void *s, int c, size_t n)$/;"	f	typeref:typename:void *
+ft_putchar_fd	libft/ft_putchar_fd.c	/^void	ft_putchar_fd(char c, int fd)$/;"	f	typeref:typename:void
+ft_putendl_fd	libft/ft_putendl_fd.c	/^void	ft_putendl_fd(char *s, int fd)$/;"	f	typeref:typename:void
+ft_putnbr_fd	libft/ft_putnbr_fd.c	/^void	ft_putnbr_fd(int n, int fd)$/;"	f	typeref:typename:void
+ft_putstr_fd	libft/ft_putstr_fd.c	/^void	ft_putstr_fd(char *s, int fd)$/;"	f	typeref:typename:void
+ft_pwd	src/builtins.c	/^int	ft_pwd()$/;"	f	typeref:typename:int
+ft_setenv	src/ft_environ.c	/^int ft_setenv(const char *name, const char *value)$/;"	f	typeref:typename:int
+ft_split	libft/ft_split.c	/^char	**ft_split(const char *s, char c)$/;"	f	typeref:typename:char **
+ft_strarrlen	src/tools.c	/^int	ft_strarrlen(char **arr)$/;"	f	typeref:typename:int
+ft_strchr	libft/ft_strchr.c	/^char	*ft_strchr(const char *s, int c)$/;"	f	typeref:typename:char *
+ft_strcmp	src/builtins.c	/^int	ft_strcmp(const char *s1, const char *s2)$/;"	f	typeref:typename:int
+ft_strcmp2	src/execution.c	/^int	ft_strcmp2(const char *s1, const char *s2)$/;"	f	typeref:typename:int
+ft_strdup	libft/ft_strdup.c	/^char	*ft_strdup(const char *s)$/;"	f	typeref:typename:char *
+ft_striteri	libft/ft_striteri.c	/^void	ft_striteri(char *s, char (*f)(unsigned int, char*))$/;"	f	typeref:typename:void
+ft_strjoin	libft/ft_strjoin.c	/^char	*ft_strjoin(char const *s1, char const *s2)$/;"	f	typeref:typename:char *
+ft_strlcat	libft/ft_strlcat.c	/^size_t	ft_strlcat(char *dst, const char *src, size_t size)$/;"	f	typeref:typename:size_t
+ft_strlcpy	libft/ft_strlcpy.c	/^size_t	ft_strlcpy(char *dst, const char *src, size_t size)$/;"	f	typeref:typename:size_t
+ft_strlen	libft/ft_strlen.c	/^size_t	ft_strlen(const char *s)$/;"	f	typeref:typename:size_t
+ft_strmapi	libft/ft_strmapi.c	/^char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))$/;"	f	typeref:typename:char *
+ft_strncmp	libft/ft_strncmp.c	/^int	ft_strncmp(const char *s1, const char *s2, size_t n)$/;"	f	typeref:typename:int
+ft_strnstr	libft/ft_strnstr.c	/^char	*ft_strnstr(const char *big, const char *little, size_t len)$/;"	f	typeref:typename:char *
+ft_strrchr	libft/ft_strrchr.c	/^char	*ft_strrchr(const char *s, int c)$/;"	f	typeref:typename:char *
+ft_strtrim	libft/ft_strtrim.c	/^char	*ft_strtrim(char const *s1, char const *set)$/;"	f	typeref:typename:char *
+ft_substr	libft/ft_substr.c	/^char	*ft_substr(char const *s, unsigned int start, size_t len)$/;"	f	typeref:typename:char *
+ft_tolower	libft/ft_tolower.c	/^int	ft_tolower(int c)$/;"	f	typeref:typename:int
+ft_toupper	libft/ft_toupper.c	/^int	ft_toupper(int c)$/;"	f	typeref:typename:int
+ft_unsetenv	src/ft_environ.c	/^int	ft_unsetenv(const char *name)$/;"	f	typeref:typename:int
+ft_wordcount	libft/ft_split.c	/^static int	ft_wordcount(const char *s, char c)$/;"	f	typeref:typename:int	file:
+ft_wordlength	libft/ft_split.c	/^static int	ft_wordlength(const char *s, char c)$/;"	f	typeref:typename:int	file:
+group_quotes	src/lexer.c	/^int group_quotes(t_token **current, char c)$/;"	f	typeref:typename:int
+group_tokens	src/lexer.c	/^t_token *group_tokens(t_token *lexer_input)$/;"	f	typeref:typename:t_token *
+handle_operator	src/lexer.c	/^int	handle_operator(const char *input, int i, t_token **head, int *id)$/;"	f	typeref:typename:int
+handle_operator_token	src/lexer.c	/^void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_tools *tools)$/;"	f	typeref:typename:void
+handle_quotes	src/lexer.c	/^int	handle_quotes(const char *input, int start, t_token **head, int *id)$/;"	f	typeref:typename:int
+handle_redirection	src/parser.c	/^void handle_redirection(t_commands *command, t_token *current)$/;"	f	typeref:typename:void
+handle_word	src/lexer.c	/^int handle_word(const char *input, int i, t_token **head, int *id)$/;"	f	typeref:typename:int
+home	src/builtins.c	/^char *home = NULL;$/;"	v	typeref:typename:char *
+id	incl/types.h	/^	int				id;$/;"	m	struct:s_token	typeref:typename:int
+id	incl/types.h	/^	int		id;$/;"	m	struct:s_commands	typeref:typename:int
+id	incl/types.h	/^	int		id;$/;"	m	struct:s_lexer_tools	typeref:typename:int
+identify_builtin	src/parser.c	/^int identify_builtin(t_commands *command, t_token *current)$/;"	f	typeref:typename:int
+identify_operator	src/lexer.c	/^t_operators	identify_operator(char c, char c_plus)$/;"	f	typeref:typename:t_operators
+init_lexer_tools	src/lexer.c	/^void init_lexer_tools(t_lexer_tools *tools)$/;"	f	typeref:typename:void
+input	incl/types.h	/^	char			*input;$/;"	m	struct:s_shell	typeref:typename:char *
+is_operator	src/lexer.c	/^int	is_operator(char c)$/;"	f	typeref:typename:int
+lexer	src/lexer.c	/^int	lexer(t_shell *shell)$/;"	f	typeref:typename:int
+lexer_grouped	incl/types.h	/^	t_token			*lexer_grouped;$/;"	m	struct:s_shell	typeref:typename:t_token *
+main	minishell_tester/test_files/loop.c	/^int	main(int argc, char const *argv[])$/;"	f	typeref:typename:int
+main	src/minishell.c	/^int	main(int argc, char **argv, char **envp)$/;"	f	typeref:typename:int
+mem_add	src/tools.c	/^void	*mem_add(size_t count, size_t size)$/;"	f	typeref:typename:void *
+mem_size	incl/types.h	/^	int		mem_size;$/;"	m	struct:s_lexer_tools	typeref:typename:int
+minishell.h	.vscode/settings.json	/^		"minishell.h": "c"$/;"	s	object:files.associations
+next	incl/types.h	/^	struct	s_commands	*next;$/;"	m	struct:s_commands	typeref:struct:s_commands *
+next	incl/types.h	/^	struct s_token			*next;$/;"	m	struct:s_token	typeref:struct:s_token *
+next	libft/libft.h	/^	struct s_list	*next;$/;"	m	struct:s_list	typeref:struct:s_list *
+operator_check	src/syntax.c	/^int	operator_check(char *str)$/;"	f	typeref:typename:int
+operator_placement	src/syntax.c	/^int	operator_placement(t_shell *shell)$/;"	f	typeref:typename:int
+parse_tokens	src/parser.c	/^t_commands *parse_tokens(t_token *lexer_grouped)$/;"	f	typeref:typename:t_commands *
+parser	src/parser.c	/^void	parser(t_shell	*shell)$/;"	f	typeref:typename:void
+prev	incl/types.h	/^	struct	s_commands	*prev;$/;"	m	struct:s_commands	typeref:struct:s_commands *
+prev	incl/types.h	/^	struct s_token			*prev;$/;"	m	struct:s_token	typeref:struct:s_token *
+print_grouped	src/lexer.c	/^void print_grouped(t_token *head)$/;"	f	typeref:typename:void
+print_parser	src/parser.c	/^void	print_parser(t_commands *commands)$/;"	f	typeref:typename:void
+print_tokens	src/lexer.c	/^void print_tokens(t_token *head)$/;"	f	typeref:typename:void
+prompt	incl/types.h	/^	char			*prompt;$/;"	m	struct:s_shell	typeref:typename:char *
+quote_flag	incl/types.h	/^	int		quote_flag;$/;"	m	struct:s_lexer_tools	typeref:typename:int
+quote_type	incl/types.h	/^	char	quote_type;$/;"	m	struct:s_lexer_tools	typeref:typename:char
+re	Makefile	/^re: fclean all$/;"	t
+re	libft/Makefile	/^re: fclean all$/;"	t
+redirect_and_execute	src/execution.c	/^int	redirect_and_execute(t_shell *shell, t_commands *cmd, char *str)$/;"	f	typeref:typename:int
+redirection	incl/types.h	/^	char	*redirection;$/;"	m	struct:s_commands	typeref:typename:char *
+s_commands	incl/types.h	/^typedef struct s_commands$/;"	s
+s_error	incl/types.h	/^typedef struct s_error$/;"	s
+s_lexer_tools	incl/types.h	/^typedef struct s_lexer_tools$/;"	s
+s_list	libft/libft.h	/^typedef struct s_list$/;"	s
+s_shell	incl/types.h	/^typedef struct s_shell$/;"	s
+s_token	incl/types.h	/^typedef struct s_token$/;"	s
+set_prompt	src/minishell.c	/^void	set_prompt(t_shell *shell)$/;"	f	typeref:typename:void
+shell_init	src/minishell.c	/^t_shell	*shell_init(char **envp)$/;"	f	typeref:typename:t_shell *
+str	incl/types.h	/^	char			*str;$/;"	m	struct:s_token	typeref:typename:char *
+str	incl/types.h	/^	char	**str;$/;"	m	struct:s_commands	typeref:typename:char **
+syntax_check	src/syntax.c	/^int	syntax_check(t_shell *shell)$/;"	f	typeref:typename:int
+t_commands	incl/types.h	/^}	t_commands;$/;"	t	typeref:struct:s_commands
+t_error	incl/types.h	/^}	t_error;$/;"	t	typeref:struct:s_error
+t_lexer_tools	incl/types.h	/^}	t_lexer_tools;$/;"	t	typeref:struct:s_lexer_tools
+t_list	libft/libft.h	/^}	t_list;$/;"	t	typeref:struct:s_list
+t_operators	incl/types.h	/^}	t_operators;$/;"	t	typeref:enum:e_operators
+t_shell	incl/types.h	/^}	t_shell;$/;"	t	typeref:struct:s_shell
+t_state	incl/types.h	/^}	t_state;$/;"	t	typeref:enum:e_control_states
+t_token	incl/types.h	/^}	t_token;$/;"	t	typeref:struct:s_token
+token	incl/types.h	/^	t_operators		token;$/;"	m	struct:s_token	typeref:typename:t_operators
+token_add_back	src/lexer_tools.c	/^void token_add_back(t_token **head, t_token *new_token)$/;"	f	typeref:typename:void
+token_len	incl/types.h	/^	int		token_len;$/;"	m	struct:s_lexer_tools	typeref:typename:int
+tokenize_input	src/lexer.c	/^t_token *tokenize_input(const char *input)$/;"	f	typeref:typename:t_token *
+tokenized	incl/types.h	/^	t_token			*tokenized;$/;"	m	struct:s_shell	typeref:typename:t_token *
+tokenized	incl/types.h	/^	t_token	*tokenized;$/;"	m	struct:s_commands	typeref:typename:t_token *
+unclosed_quotes	src/syntax.c	/^int unclosed_quotes(const char *input)$/;"	f	typeref:typename:int
+valid_identifier_check	src/ft_environ.c	/^int	valid_identifier_check(const char *name)$/;"	f	typeref:typename:int

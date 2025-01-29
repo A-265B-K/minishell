@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/20 12:41:34 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/01/21 16:35:08 by ahornstr         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   parser.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/12/20 12:41:34 by ahornstr      #+#    #+#                 */
+/*   Updated: 2025/01/27 16:14:26 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,9 +153,9 @@ void	parser(t_shell	*shell)
 {
 	if(!syntax_check(shell))
 	{
-		printf("SYNTAX VALID\n");
+	//	printf("SYNTAX VALID\n");
 	}
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
-	print_parser(shell->com_struct);
+	// print_parser(shell->com_struct);
 	
 }
