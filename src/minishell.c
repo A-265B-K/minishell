@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/01/21 18:12:50 by ahornstr         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   minishell.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
+/*   Updated: 2025/01/23 17:50:45 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	set_prompt(t_shell *shell)
 	prompt_line = env_get("USER", shell->envp);
 	prompt_line = free_join(prompt_line, " @ ", true, false);
 	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), true, true);
-	prompt_line = free_join(prompt_line, " :", true, false);
+	prompt_line = free_join(prompt_line, ": ", true, false);
 	shell->prompt = ft_strdup(prompt_line);
 	free (prompt_line);
 }
@@ -68,7 +68,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strlen(shell->input) > 0)
 			add_history(shell->input);
 		parser(shell);
-		printf("{{{execute}}}\n");	
+		execute(shell);
 	}
 	close_shell(shell);
 	return (0);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/01/21 16:18:45 by ahornstr         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   lexer.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/12/02 15:06:43 by ahornstr      #+#    #+#                 */
+/*   Updated: 2025/01/27 15:51:32 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void print_tokens(t_token *head)
 	temp = head;
     while (temp)
 	{
-        printf("Char: %c, ID: %d, Token: %d\n", temp->c, temp->id, temp->token);
+      //  printf("Char: %c, ID: %d, Token: %d\n", temp->c, temp->id, temp->token);
         temp = temp->next;
     }
 }
@@ -243,10 +243,10 @@ void print_grouped(t_token *head)
 {
     t_token *temp;
 	temp = head;
-    printf("GROUPED!\n");
+    //printf("GROUPED!\n");
     while (temp)
 	{
-        printf("str: %s, ID: %d, Token: %d\n", temp->str, temp->id, temp->token);
+    //    printf("str: %s, ID: %d, Token: %d\n", temp->str, temp->id, temp->token);
         temp = temp->next;
     }
 }
@@ -259,7 +259,7 @@ int	lexer(t_shell *shell)
 		return (0);
 	}
 	shell->tokenized = tokenize_input(shell->input);
-	// print_tokens(shell->tokenized);
+	 print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);
     print_grouped(shell->lexer_grouped);
 	return (1);

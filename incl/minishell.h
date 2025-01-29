@@ -15,6 +15,7 @@
 # include <stdio.h>
 # include <ctype.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # include <curses.h>
 # include <term.h>
@@ -126,9 +127,19 @@ void add_command_to_list(t_commands **commands, t_commands *new_command);
 t_commands *create_command_node(int count);
 void free_command_node(t_commands *command);
 
-
-
-
+void	execute_builtin(t_shell *shell, t_commands *cmd);
+int	ft_cd(char	**params);
+void	ft_exit(char **params, int exitcode);
+int	ft_export(char **params);
+int	ft_env();
+int ft_echo(char **params, t_shell *shell);
+int	ft_pwd();
+int	ft_unsetenv(char **params);
+char	*ft_getenv(const char *name);
+int ft_setenv(const char *name, const char *value);
+const char *const *borrow_env(void);
+int	execute(t_shell *shell);
+int	ft_strcmp2(const char *s1, const char *s2);
 
 // // SIGNALS
 // // signals/signals.c
