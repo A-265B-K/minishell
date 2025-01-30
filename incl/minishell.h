@@ -16,7 +16,7 @@
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
-
+# include <sys/stat.h>
 # include <curses.h>
 # include <term.h>
 
