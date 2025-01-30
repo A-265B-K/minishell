@@ -11,22 +11,27 @@ int	ft_pwd()
 int ft_echo(char **params, t_shell *shell)
 {
 	int	i;
+	int	j;
 
 	i = 0;
 	if (params)
 		while (params[i])
 		{
+			j = 0;
 			if (i > 0)
 				printf(" ");
 			if (params[i][0] == '$' && !params[i][1])
+			{
 				printf("$");
+				j += 1;
+			}
 			else if (params[i][0] == '$')
 			{
 				if (params[i][1] == '?')
 					printf("%d", shell->exitcode);
+				j += 2;
 			}
-			else
-				printf("%s", params[i]);
+			printf("%s", params[i] + j);
 			i += 1;
 		}
 	printf("\n");
@@ -125,7 +130,6 @@ int	ft_cd(char	**params)
 		// Fix env variables
 		ft_strlcpy(curpath, dir_operand, PATH_MAX);
 	}
-	printf("In operand: %s\n", curpath);
 	if (curpath[0] != '/')
 	{
 		ft_strlcpy(temp, getcwd(NULL, 0), PATH_MAX);
@@ -135,11 +139,13 @@ int	ft_cd(char	**params)
 		ft_strlcpy(curpath, temp, 0);
 	}
 	// set PWD
-	printf("Current path: %s\n", curpath);
-	if (chdir(curpath) == -1) // implement safeguard
-		dprintf(2, "cd: no such file or directory: %s\n", curpath);
-	printf("%s\n", getcwd(NULL, 0));
-	return (1);
+	if (chdir(curpath) == -1) // implement safegu
+	{
+		dprintf(2, "cd: No such file or directory\n");
+		return (1);
+	}
+		//printf("%s\n", getcwd(NULL, 0));
+	return (0);
 }
 
 int	ft_strcmp(const char *s1, const char *s2)

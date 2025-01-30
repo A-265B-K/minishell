@@ -34,38 +34,46 @@ void	execute_builtin(t_shell *shell, t_commands *cmd)
 
 int	execute_cmd(t_shell *shell, t_commands *cmd)
 {
-//	pid_t	pid;
-	char	*function_name = ft_strjoin("/usr/bin/", cmd->str[0]);
-
-	 (void)shell;
-	// pid = fork();
-	// if (!pid)
-	// {
-		if (execve(function_name, cmd->str + 1, (char *const *)borrow_env()) == -1)
+	if (cmd->builtin)
+	{
+		execute_builtin(shell, cmd);
+		exit(0);
+	}
+	char *file_path;
+	if (cmd->str[0][0] == '/' || cmd->str[0][0] == '.')
+	{
+		if (cmd->str[0][0] == '/')
 		{
-			dprintf(2, "Execution failed\n");
-			return (1);
+			file_path = ft_strjoin("/", cmd->str[0] + 1);
 		}
-	// 	exit(0);
-	// }
-	// else if (pid < 0)
-	// {
-	// 	dprintf(2, "Fork failed");
-	// 	return (1);
-	// }
-	// else
-	// 	waitpid(0, NULL, 0);
-	return (0);
-	// // make it print to the file
-	// // look up access:W
+		if (cmd->str[0][0] == '.')
+		{
+			char buf[100];
+			file_path = ft_strjoin(getcwd(buf, 100), cmd->str[0] + 2);
+		}
+		if (access(file_path, F_OK))
+		{
+			dprintf(2, " No such file or directory\n");
+			return (127);
+		}
+		return(0);
+	}
 
-	// int	i = 0;
-	// while (cmd->str[i])
-	// {
-	// 	printf("Word %s\n", cmd->str[i]);
-	// 	i += 1;
-	// }
-	// return (0);
+// int is_regular_file(const char *path)
+// {
+//     struct stat path_stat;
+//     stat(path, &path_stat);
+//     return S_ISREG(path_stat.st_mode);
+// }
+
+
+	char	*function_name = ft_strjoin("/usr/bin/", cmd->str[0]);
+	if (execve(function_name, cmd->str + 1, (char *const *)borrow_env()) == -1)
+	{
+		dprintf(2, " command not found\n");
+		return (127);
+	}
+	return (0);
 }
 
 int	redirect_and_execute(t_shell *shell, t_commands *cmd, char *str)
@@ -77,9 +85,14 @@ int	redirect_and_execute(t_shell *shell, t_commands *cmd, char *str)
 
 	//pipe(pipe_fd);
 
-	if (cmd->builtin)
+	if (cmd->builtin && !cmd->next)
 	{
 		execute_builtin(shell, cmd);
+		return (0);
+	}
+	if (!cmd->next)
+	{
+		shell->exitcode = execute_cmd(shell, cmd);
 		return (0);
 	}
 	if (str)
@@ -118,19 +131,7 @@ int	redirect_and_execute(t_shell *shell, t_commands *cmd, char *str)
 int	execute(t_shell *shell)
 {
 	t_commands *cmd;
-	//pid_t		id;
-
 	cmd = shell->com_struct;
-
-	//id = fork();
-//	if (id < 0)
-//		return (1);
-//	if (id)
-//	{
-//		while (errno != ECHILD)
-//			waitpid(0, NULL, 0);
-//		return (0);
-//	}
 	redirect_and_execute(shell, cmd, cmd->redirection);
 	while(cmd->next)
 	{
@@ -138,5 +139,4 @@ int	execute(t_shell *shell)
 		redirect_and_execute(shell, cmd, cmd->redirection);
 	}
 	return (0);
-	//exit(0);
 }
