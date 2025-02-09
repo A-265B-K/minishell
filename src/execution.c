@@ -29,7 +29,6 @@ void	execute_builtin(t_shell *shell, t_commands *cmd)
 			shell->exitcode = ft_env();
 	else if(!ft_strcmp2(cmd->builtin, "exit"))
 			ft_exit(cmd->str, shell->exitcode);
-//	dprintf(2, "Exitcode in struct: %d\n", shell->exitcode);
 }
 
 int	is_dir(const char *file_path)
@@ -39,118 +38,111 @@ int	is_dir(const char *file_path)
 		return (0);
 	return (S_ISDIR(path_stat.st_mode));
 }
+int execute_cmd(t_shell *shell, t_commands *cmd) {
+    if (cmd->builtin) {
+        execute_builtin(shell, cmd);
+        exit(0);
+    }
 
-int	execute_cmd(t_shell *shell, t_commands *cmd)
-{
-	//printf("Executing cmd->str: %s\n", cmd->str[0]);
-	if (cmd->builtin)
-	{
-		execute_builtin(shell, cmd);
-		exit(0);
-	}
-	char *file_path;
+    char *file_path;
 
-	if (cmd->str[0][0] == '/' || cmd->str[0][0] == '.')
-	{
-		if (cmd->str[0][0] == '/')
-		{
-			file_path = ft_strjoin("/", cmd->str[0] + 1);
-		}
-		if (cmd->str[0][0] == '.')
-		{
-			char buf[100];
-			file_path = ft_strjoin(getcwd(buf, 100), cmd->str[0] + 1);
-		}
+    if (cmd->str[0][0] == '/' || cmd->str[0][0] == '.') {
+        if (cmd->str[0][0] == '/') {
+            file_path = ft_strjoin("/", cmd->str[0] + 1);
+        } else if (cmd->str[0][0] == '.') {
+            char buf[100];
+            file_path = ft_strjoin(getcwd(buf, 100), cmd->str[0] + 1);
+        }
 
-		if (access(file_path, F_OK))
-		{
-			dprintf(2, " No such file or directory\n");
-			return (127);
-		}
-		if (access(file_path, R_OK) || access(file_path, W_OK) || access(file_path, X_OK))
-		{
-			dprintf(2, " Permission denied\n");
-			return (126);
-		}
-		if (!is_dir(file_path))
-		{
-			dprintf(2, " Is a directory\n");
-			return (126);
-		}
-	}
+        if (access(file_path, F_OK)) {
+            dprintf(2, " No such file or directory\n");
+            return 127;
+        }
+        if (access(file_path, R_OK) || access(file_path, W_OK) || access(file_path, X_OK)) {
+            dprintf(2, " Permission denied\n");
+            return 126;
+        }
+        if (!is_dir(file_path)) {
+            dprintf(2, " Is a directory\n");
+            return 126;
+        }
+    }
 
-	pid_t pid = fork();
-	if (!pid)
-	{
-		dprintf(2, "Command: %s\n", cmd->str[1]);
-		dup2(1, STDOUT_FILENO);
-		char	*function_name = ft_strjoin("/usr/bin/", cmd->str[0]);
-		if (execve(function_name, cmd->str + 1, (char *const *)borrow_env()) == -1)
-		{
-			dprintf(2, " command not found\n");
-			free(function_name);
-			return (127);
-		}
-	}
-	else
-	{
-		waitpid(0, NULL, 0);
+    pid_t pid = fork();
+	int status;
+    if (pid == 0) {
+        char *function_name = ft_strjoin("/usr/bin/", cmd->str[0]);
+        if (execve(function_name, cmd->str, (char *const *)borrow_env()) == -1) {
+          //  function_name = ft_strjoin("./", cmd->str[0]);
+            dprintf(2, " command not found\n");
+            free(function_name);
+            exit (127);
+        }
+    } else {
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status)) {
+            return WEXITSTATUS(status); // Get child's exit code
+        } else {
+            return 1; // Some error occurred
+        }
 	}
 
-
-	return (0);
+    return 0;
 }
 
-int	redirect_and_execute(t_shell *shell, t_commands *cmd)
-{
-	int	i = 1;
-	int	out_fd;
-	//int	pipe_fd[2];
-	pid_t pid;
-	char *str = cmd->redirection;
-	if (cmd->builtin && !cmd->next)
-	{
-		execute_builtin(shell, cmd);
-		return (0);
+int redirect_and_execute(t_shell *shell, t_commands *cmd) {
+    int out_fd;
+    pid_t pid;
+    char *str = cmd->redirection;
+
+    if (cmd->builtin && !cmd->next) {
+        execute_builtin(shell, cmd);
+        return 0;
+    }
+
+    if (!cmd->next) {
+        shell->exitcode = execute_cmd(shell, cmd);
+        return 0;
+    }
+
+    if (str) {
+        if (str[1] == '>') {
+            out_fd = open(str + 2, O_CREAT | O_WRONLY | O_APPEND, 0644);
+        } else {
+            out_fd = open(str + 1, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+        }
+        if (out_fd < 0) {
+            perror("Open");
+            return 1;
+        }
+    } else {
+        out_fd = STDOUT_FILENO;
+    }
+
+    pid = fork();
+    if (pid == 0) {
+		if (out_fd >= 0 && out_fd != STDOUT_FILENO) {
+	   	dup2(out_fd, STDOUT_FILENO);
+	    close(out_fd);
 	}
-	if (!cmd->next)
-	{
-		shell->exitcode = execute_cmd(shell, cmd);
-		return (0);
-	}
-	if (str) 
-	{
-		// google clobber	
-		if (str[i] == '>')
-		{
-			i += 1;
-			out_fd = open(str + i, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		}
-		else
-			out_fd = open(str + i, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (out_fd < 0)
-		{
-			perror("Open");
-			return (1);
-		}
-	}
-	else
-		out_fd = open("/dev/stdout", O_WRONLY);
-	pid = fork();
-	if (!pid)
-	{
-		dup2(out_fd, STDOUT_FILENO);
-		execute_cmd(shell, cmd);
-		exit(0);
-	}
-	else
-	{
-		waitpid(0, NULL, 0);
-		close(out_fd);
-	}
-	return (0);
+        exit (execute_cmd(shell, cmd));
+    } else {
+        waitpid(pid, NULL, 0);
+        if (out_fd != STDOUT_FILENO) {
+            close(out_fd);
+        }
+    }
+
+    return 0;
 }
 
+void debug_fds(const char *msg) {
+    printf("%s\n", msg);
+    for (int fd = 0; fd < 10; fd++) {
+        if (fcntl(fd, F_GETFD) != -1)
+            dprintf(2, "FD %d is open\n", fd);
+    }
+}
 
 int execute_pipes(t_commands *cmd, int input_fd, t_shell *shell) {
     int pipe_fd[2];
@@ -199,8 +191,9 @@ int execute_pipes(t_commands *cmd, int input_fd, t_shell *shell) {
 
     if (pid == 0) {
         close(pipe_fd[0]);
-        dup2(input_fd, STDIN_FILENO); // Redirect input from the previous command
-        dup2(pipe_fd[1], STDOUT_FILENO); // Redirect output to pipe
+        dup2(input_fd, STDIN_FILENO);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        close(pipe_fd[1]);
 
         if (str) {
             if (str[1] == '>') {
@@ -216,31 +209,35 @@ int execute_pipes(t_commands *cmd, int input_fd, t_shell *shell) {
             close(out_fd);
         }
 
-        execute_cmd(shell, cmd);
+        if (execute_cmd(shell, cmd) == -1) {
+            exit(1);
+        }
         exit(0);
     }
 
     close(pipe_fd[1]);
-    if (input_fd != STDIN_FILENO)
-        close(input_fd); 
+    if (input_fd != STDIN_FILENO) {
+        close(input_fd);
+    }
+    waitpid(pid, NULL, 0);
 
     return execute_pipes(cmd->next, pipe_fd[0], shell);
 }
 
-int	handle_pipes(t_shell *shell, t_commands *cmd)
-{
-	execute_pipes(cmd, STDIN_FILENO, shell);
-	return (0);
+int handle_pipes(t_shell *shell, t_commands *cmd) {
+    execute_pipes(cmd, STDIN_FILENO, shell);
+    return 0;
 }
 
-int	execute(t_shell *shell)
-{
-	t_commands *cmd;
-	cmd = shell->com_struct;
 
-	if (cmd->next)
-		handle_pipes(shell, cmd);	
-	else
-		redirect_and_execute(shell, cmd);
-	return (0);
+int execute(t_shell *shell) {
+    t_commands *cmd = shell->com_struct;
+
+    if (cmd->next) {
+        handle_pipes(shell, cmd);
+    } else {
+        redirect_and_execute(shell, cmd);
+    }
+
+    return 0;
 }
