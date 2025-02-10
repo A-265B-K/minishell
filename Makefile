@@ -4,8 +4,8 @@ WHITE  		= \033[97m
 RESET   	= \033[0m
 
 NAME	= minishell
-CC		= cc
-CFLAGS	= -Werror -Wextra -Wall -Wunreachable-code -march=native -g -fsanitize=address
+CC		= clang
+CFLAGS	= -Werror -Wextra -Wall -Wunreachable-code -march=native -g -fsanitize=address -fsanitize=undefined
 INC		= -I ./incl/
 SRC_PATH	= src/
 SRC 		= $(wildcard $(SRC_PATH)*/*.c) $(wildcard $(SRC_PATH)/*.c)

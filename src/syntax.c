@@ -19,26 +19,6 @@ int	syntax_check(t_shell *shell)
 	return (0);
 }
 
-
-
-// int	builtin_count(t_shell *shell)
-// {
-// 	t_token *temp;
-// 	temp = shell->lexer_grouped;
-// 	int	count;
-
-// 	count = 0;
-// 	while (temp->id != 0)
-// 	{
-// 		temp = temp->prev;
-// 	}
-// 	while (temp && temp->next)
-// 	{
-// 		while (temp->str)
-// 	}
-
-// }
-
 int	operator_check(char *str)
 {
 	int	i;
@@ -102,7 +82,7 @@ int	operator_placement(t_shell *shell)
 		{
 			if ((is_f_operator(temp->c) && !temp->next) || (is_f_operator(temp->c) && temp->id == 0))
 			{
-				error("syntax error near unexpected token\n");
+				error("syntax error near unexpected token: \n");
 				return (1);
 			}
 		}

@@ -23,6 +23,6 @@ void	clean_up_parser(t_shell *shell)
 			shell->tokenized->prev = NULL;
 			shell->tokenized = shell->tokenized->next;
 		}
-		free (shell->tokenized)
+		free (shell->tokenized);
 	}
 }

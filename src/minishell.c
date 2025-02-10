@@ -31,7 +31,6 @@ t_shell	*shell_init(char **envp)
 	t_shell *shell;
 	shell = mem_add(1, sizeof(t_shell));
 	shell->envp = alloc_double(envp);
-	// shell->com_struct = mem_add(1, sizeof(shell->com_struct));
 	set_prompt(shell);
 	return (shell);
 }
@@ -64,9 +63,8 @@ int	main(int argc, char **argv, char **envp)
 		if (!ft_strncmp(shell->input, "shellleak", 9))
 			break ;
 		if (!lexer(shell))
-		{
-			continue;
-		}
+			break ;
+		printf("here\n");
 		if (!ft_strncmp(shell->input, "lexerleak", 9))
 			break ;
 		if (ft_strlen(shell->input) > 0)
