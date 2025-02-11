@@ -3,7 +3,9 @@
 
 t_commands *create_command_node(int count)
 {
-    t_commands *new_command = malloc(sizeof(t_commands));
+    t_commands *new_command;
+    
+    new_command = malloc(sizeof(t_commands));
     if (!new_command)
 		return NULL;
 	new_command->id = count;
@@ -18,13 +20,14 @@ t_commands *create_command_node(int count)
 
 void add_command_to_list(t_commands **commands, t_commands *new_command)
 {
+    t_commands *last;
+
+    last = NULL;
     if (*commands == NULL)
-    {
         *commands = new_command;
-    }
     else
     {
-        t_commands *last = *commands;
+       last = *commands;
         while (last->next)
             last = last->next;
         last->next = new_command;
