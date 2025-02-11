@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/12/02 15:06:43 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/01/27 15:51:32 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/11 17:25:45 by wdpk          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,9 @@ t_operators	identify_operator(char c, char c_plus)
 		return (O_LESS);
     if (c == '>')
 		return (O_GREAT);
+	// if (c == '$')
+	// 	return (O_ENVV);
     return (-1);
-}
-
-int	is_operator(char c)
-{
-	if (c == '|' || c == ';' || c == '<' || c == '>' || c == '&')
-		return (1);
-	return (0);
 }
 
 int handle_word(const char *input, int i, t_token **head, int *id)
@@ -68,8 +63,9 @@ int	handle_quotes(const char *input, int start, t_token **head, int *id)
 
 int	handle_operator(const char *input, int i, t_token **head, int *id)
 {
-    t_operators op;
-    char    *temp;
+    t_operators	op;
+    char		*temp;
+
     temp = mem_add(1, 3);
 	op = identify_operator(input[i], input[i + 1]);
     if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
@@ -113,7 +109,7 @@ void print_tokens(t_token *head)
 	temp = head;
     while (temp)
 	{
-      //  printf("Char: %c, ID: %d, Token: %d\n", temp->c, temp->id, temp->token);
+        printf("Char: %c, ID: %d, Token: %d\n", temp->c, temp->id, temp->token);
         temp = temp->next;
     }
 }
@@ -188,6 +184,28 @@ int group_quotes(t_token **current, char c)
     return (0);
 }
 
+int	quote_group(t_token **current, t_lexer_tools *tools, t_token **lexer_grouped)
+{
+	tools->quote_flag = 1;
+    tools->quote_type = (*current)->c;
+    append_to_buffer(tools, (*current)->c);
+    (*current) = (*current)->next;
+    while ((*current) && group_quotes(&(*current), tools->quote_type))
+    {
+        append_to_buffer(tools, (*current)->c);
+        (*current) = (*current)->next;
+    }
+    if((*current) && ((*current)->c == tools->quote_type || (*current)->c == tools->quote_type))
+    {
+    	tools->quote_flag = 0;
+        append_to_buffer(tools, (*current)->c);
+        finalize_token(lexer_grouped, tools, O_G_WORD);
+        (*current) = (*current)->next;
+        return (0);
+    }
+	return (1);
+}
+
 t_token *group_tokens(t_token *lexer_input)
 {
     t_token *lexer_grouped = NULL;
@@ -199,39 +217,16 @@ t_token *group_tokens(t_token *lexer_input)
     {
         if(current->c == '\'' || current->c == '\"')
         {
-            tools.quote_flag = 1;
-            tools.quote_type = current->c;
-            append_to_buffer(&tools, current->c);
-            current = current->next;
-            while (current && group_quotes(&current, tools.quote_type))
-            {
-                append_to_buffer(&tools, current->c);
-                current = current->next;
-            }
-            if(current && (current->c == tools.quote_type || current->c == tools.quote_type))
-            {
-                tools.quote_flag = 0;
-                append_to_buffer(&tools, current->c);
-                finalize_token(&lexer_grouped, &tools, O_G_WORD);
-                current = current->next;
-                continue;
-            }
+            if (!quote_group(&current, &tools, &lexer_grouped))
+				continue;
         }
         if (current && isspace(current->c))
-        {
             finalize_token(&lexer_grouped, &tools, O_G_WORD);
-            current = current->next;
-        }
         else if (current && is_operator(current->c))
-        {
             handle_operator_token(&lexer_grouped, &current, &tools);
-            current = current->next;
-        }
         else if (current)
-        {
             append_to_buffer(&tools, current->c);
-            current = current->next;
-        }
+		current = current->next;
     }
     finalize_token(&lexer_grouped, &tools, O_G_WORD);
     free(tools.buffer);
@@ -243,10 +238,10 @@ void print_grouped(t_token *head)
 {
     t_token *temp;
 	temp = head;
-    //printf("GROUPED!\n");
+    printf("GROUPED!\n");
     while (temp)
 	{
-    //    printf("str: %s, ID: %d, Token: %d\n", temp->str, temp->id, temp->token);
+        printf("str: %s, ID: %d, Token: %d\n", temp->str, temp->id, temp->token);
         temp = temp->next;
     }
 }
@@ -259,8 +254,8 @@ int	lexer(t_shell *shell)
 		return (0);
 	}
 	shell->tokenized = tokenize_input(shell->input);
-	 print_tokens(shell->tokenized);
+	// print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);
-    print_grouped(shell->lexer_grouped);
+   // print_grouped(shell->lexer_grouped);
 	return (1);
 }

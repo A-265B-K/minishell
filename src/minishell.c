@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/09 15:26:25 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/11 17:29:41 by wdpk          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ void	set_prompt(t_shell *shell)
 	if (shell->prompt)
 		free(shell->prompt);
 	prompt_line = env_get("USER", shell->envp);
-	prompt_line = free_join(prompt_line, "@", true, false);
+	prompt_line = free_join(prompt_line, " @ ", true, false);
 	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), true, true);
-	prompt_line = free_join(prompt_line, ": ", true, false);
+	prompt_line = free_join(prompt_line, " :", true, false);
 	shell->prompt = ft_strdup(prompt_line);
 	free (prompt_line);
 }
@@ -31,7 +31,6 @@ t_shell	*shell_init(char **envp)
 	t_shell *shell;
 	shell = mem_add(1, sizeof(t_shell));
 	shell->envp = alloc_double(envp);
-	// shell->com_struct = mem_add(1, sizeof(shell->com_struct));
 	set_prompt(shell);
 	return (shell);
 }
@@ -61,13 +60,18 @@ int	main(int argc, char **argv, char **envp)
 	shell = shell_init(envp);
 	while ((shell->input = readline(shell->prompt)) != NULL)
 	{
+		if (!ft_strncmp(shell->input, "shellleak", 9))
+			break ;
 		if (!lexer(shell))
-		{
-			continue;
-		}
+			break ;
+	//	printf("here\n");
+		if (!ft_strncmp(shell->input, "lexerleak", 9))
+			break ;
 		if (ft_strlen(shell->input) > 0)
 			add_history(shell->input);
 		parser(shell);
+		if (!ft_strncmp(shell->input, "parserleak", 10))
+			break ;
 		execute(shell);
 	}
 	close_shell(shell);
