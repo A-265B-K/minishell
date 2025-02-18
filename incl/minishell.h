@@ -108,7 +108,7 @@ void handle_operator_token(t_token **lexer_grouped, t_token **current, t_lexer_t
 void finalize_token(t_token **lexer_grouped, t_lexer_tools *tools, t_operators type);
 void init_lexer_tools(t_lexer_tools *tools);
 int group_quotes(t_token **current, char c);
-int is_f_operator(char c);
+ int is_f_operator(char c);
 char	*search_env(char **env, char *target);
 
 // // parser
@@ -116,6 +116,12 @@ void	parser(t_shell *shell);
 void handle_redirection(t_commands *command, t_token *current);
 int identify_builtin(t_commands *command, t_token *current);
 t_commands *parse_tokens(t_token *lexer_grouped);
+// void    remove_quotes(char *str);
+void	command_clean(t_commands *com);
+
+void process_quotes_in_commands(t_commands *cmd);
+char *remove_quotes(const char *input);
+char *expand_env_var(const char *var);
 
 // // syntax checks
 int	operator_placement(t_shell *shell);
@@ -126,7 +132,8 @@ int unclosed_quotes(const char *input);
 // // parser tools
 void add_command_to_list(t_commands **commands, t_commands *new_command);
 t_commands *create_command_node(int count);
-void free_command_node(t_commands *command);
+void free_command_list(t_commands *commands);
+
 
 
 
