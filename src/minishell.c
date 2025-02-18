@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/01/23 19:14:28 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/02/18 17:49:26 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,27 @@ t_shell	*shell_init(char **envp)
 	set_prompt(shell);
 	return (shell);
 }
+void	reset_shell(t_shell *shell)
+{
+	if (shell)
+	{
+		if (shell->com_struct)
+		{
+			free_command_list(shell->com_struct);
+			shell->com_struct = NULL;
+		}
+		if (shell->tokenized)
+		{
+			free_tokens(shell->tokenized);
+			shell->tokenized = NULL;
+		}
+		if (shell->lexer_grouped)
+		{
+			free_tokens(shell->lexer_grouped);
+			shell->lexer_grouped = NULL;
+		}
+	}
+}
 
 void	close_shell(t_shell *shell)
 {
@@ -46,9 +67,14 @@ void	close_shell(t_shell *shell)
 		if (shell->prompt)
 			free(shell->prompt);
 		if (shell->com_struct)
-				free_command_node(shell->com_struct);
+		{
+			free_command_list(shell->com_struct);
+			shell->com_struct = NULL;
+		}
+		if (shell->tokenized)
+			free_tokens(shell->tokenized);
 		if (shell->lexer_grouped)
-				free_tokens(shell->lexer_grouped);
+			free_tokens(shell->lexer_grouped);
 		free (shell);
 	}
 }
@@ -64,7 +90,6 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		if (!lexer(shell))
 			break ;
-		printf("here\n");
 		if (!ft_strncmp(shell->input, "lexerleak", 9))
 			break ;
 		if (ft_strlen(shell->input) > 0)
@@ -72,7 +97,8 @@ int	main(int argc, char **argv, char **envp)
 		parser(shell);
 		if (!ft_strncmp(shell->input, "parserleak", 10))
 			break ;
-		printf("{{{execute}}}\n");	
+		printf("{{{execute}}}\n");
+		reset_shell(shell);
 	}
 	close_shell(shell);
 	return (0);

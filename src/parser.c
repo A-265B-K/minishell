@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 12:41:34 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/01/23 19:33:55 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/02/18 17:55:48 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,11 @@ void free_command_node(t_commands *command)
     free(command);
 }
 
-// this can be written cleaner.
 
 int identify_builtin(t_commands *command, t_token *current)
 {
-	int	len;
-	
-	len = ft_strlen(current->str);
-    if (ft_strncmp(current->str, "echo", len) == 0 || ft_strncmp(current->str, "cd", len) == 0 || ft_strncmp(current->str, "pwd", len) == 0)
+
+    if (ft_strncmp(current->str, "echo", 4) == 0 || ft_strncmp(current->str, "cd", 2) == 0 || ft_strncmp(current->str, "pwd", 3) == 0)
 	{
 		if (!command->builtin)
 		{
@@ -67,7 +64,7 @@ int identify_builtin(t_commands *command, t_token *current)
 			return (1);
 		}
 	}
-	if (ft_strncmp(current->str, "export", len) == 0 || ft_strncmp(current->str, "unset", len) == 0 || ft_strncmp(current->str, "exit", len) == 0)
+	if (ft_strncmp(current->str, "export", 6) == 0 || ft_strncmp(current->str, "unset", 5) == 0 || ft_strncmp(current->str, "exit", 4) == 0)
 	{
 		if (!command->builtin)
 		{
@@ -90,7 +87,7 @@ int	parse_builtin(t_token *current_token, t_commands *current_command, int arg_c
 {
 	if (current_token->token == O_G_WORD)
     {
-        if (!identify_builtin(current_command, current_token)) // handle multiple builtins < HERE > second, third etc. builtins == O_WORD
+        if (!identify_builtin(current_command, current_token))
         {
             current_command->str = realloc(current_command->str, sizeof(char *) * (arg_count + 2));
             current_command->str[arg_count] = ft_strdup(current_token->str);
@@ -101,7 +98,6 @@ int	parse_builtin(t_token *current_token, t_commands *current_command, int arg_c
 	return (arg_count);
 }
 
-// shorten please!
 t_commands *parse_tokens(t_token *lexer_grouped)
 {
     t_commands *commands = NULL;
@@ -187,50 +183,152 @@ char	*search_env(char **env, char *target)
 	
 }
 
-// change to get_env and not the struct envp** --> after merge
-void	get_env_var(t_shell *shell, t_commands *com_struct)
-{
-	char	*buffer;
-	int	i;
+// void	get_env_var(t_shell *shell, t_commands *com_struct)
+// {
+// 	char	*buffer;
+// 	int	i;
 	
-	buffer = NULL;
-	i = 0;
-	while (com_struct)
-    {
-		if (com_struct->str)
-		{
-			while (com_struct->str[i])
-			{
-				if (com_struct->str[i][0] == '$')
-				{
-					buffer = ft_substr(com_struct->str[i], 1, ft_strlen(com_struct->str[i]));
-					if (search_env(shell->envp, buffer))
-					{
-						free (com_struct->str[i]);
-							com_struct->str[i] = ft_strdup(search_env(shell->envp, buffer));
-						if (!com_struct->str[i])
-							perror("malloc get_env_var --> substr return");
-					}
-					if (buffer)
-					free (buffer);
-				}
-				i++;
-			}
-		}
-		com_struct = com_struct->next;
-    }
-	while (com_struct)
-	{
-		com_struct = com_struct->prev;
-	}
+// 	buffer = NULL;
+// 	i = 0;
+// 	while (com_struct)
+//     {
+// 		if (com_struct->str)
+// 		{
+// 			while (com_struct->str[i])
+// 			{
+// 				if (com_struct->str[i][0] == '$')
+// 				{
+// 					buffer = ft_substr(com_struct->str[i], 1, ft_strlen(com_struct->str[i]));
+// 					if (search_env(shell->envp, buffer))
+// 					{
+// 						free (com_struct->str[i]);
+// 							com_struct->str[i] = ft_strdup(search_env(shell->envp, buffer));
+// 						if (!com_struct->str[i])
+// 							perror("malloc get_env_var --> substr return");
+// 					}
+// 					if (buffer)
+// 					free (buffer);
+// 				}
+// 				i++;
+// 			}
+// 		}
+// 		com_struct = com_struct->next;
+//     }
+// 	while (com_struct)
+// 	{
+// 		com_struct = com_struct->prev;
+// 	}
+// }
+
+char *expand_env_var(const char *var)
+{
+    char *value;
+	
+	value = getenv(var);
+    if (!value)
+        return (ft_strdup(""));
+    return (ft_strdup(value));
 }
 
-// to do parser
-// heredoc support
-// add more syntax checks
+static void toggle_quotes(char c, int *in_single, int *in_double)
+{
+    if (c == '\'' && !(*in_double))
+		*in_single = !(*in_single);
+    else if (c == '"' && !(*in_single))
+		*in_double = !(*in_double);
+}
 
-// error handling for the whole project.
-// Check if all quotes work !
+static int handle_variable_expansion(const char *input, int *i, char **result, int *j)
+{
+    char	*var_name;
+    char	*expand;
+    int		start;
+    int		len;
+
+    start = *i + 1;
+    while (ft_isalnum(input[start]) || input[start] == '_')
+        start++;
+    len = start - (*i + 1);
+    if (len <= 0)
+        return (0);
+    var_name = malloc(len + 1);
+    if (!var_name)
+        return (0);
+    ft_strlcpy(var_name, &input[*i + 1], len + 1);
+    expand = expand_env_var(var_name);
+    free(var_name);
+    if (expand)
+    {
+        int new_size = ft_strlen(*result) + ft_strlen(expand) + 1;
+        *result = realloc(*result, new_size);
+        if (!*result)
+        {
+            free(expand);
+            return (0);
+        }
+        memcpy(&(*result)[*j], expand, ft_strlen(expand));
+        *j += ft_strlen(expand);
+        free(expand);
+    }
+    *i += len;
+    return (1);
+}
+
+
+char *remove_quotes(const char *input)
+{
+    int i = 0;
+	int	j = 0;
+	int in_single = 0;
+	int in_double = 0;
+    char *result;
+	
+	result = malloc(ft_strlen(input) + 1);
+    if (!result)
+		return NULL;
+    while (input[i])
+	{
+        toggle_quotes(input[i], &in_single, &in_double);
+        if (input[i] == '$' && !in_single)
+		{
+            if (handle_variable_expansion(input, &i, &result, &j))
+				break ;
+		}
+        else if (!(input[i] == '\'' && !in_double) && !(input[i] == '"' && !in_single))
+            result[j++] = input[i];
+        i++;
+    }
+	result[j] = '\0';
+    return (result);
+}
+
+void process_quotes_in_commands(t_commands *cmd)
+{
+	int	i;
+	char *temp;
+	char *temp_b;
+
+	i = 0;
+	temp = NULL;
+    while (cmd)
+	{
+		if (cmd->builtin)
+		{
+			temp = remove_quotes(cmd->builtin);
+			free(cmd->builtin);
+			cmd->builtin = temp;
+		}
+		i = 0;
+		while (cmd->str && cmd->str[i])
+		{
+			temp_b = remove_quotes(cmd->str[i]);
+			free(cmd->str[i]);
+			cmd->str[i] = temp_b;
+			i++;
+		}
+        cmd = cmd->next;
+    }
+}
 
 void	parser(t_shell	*shell)
 {
@@ -241,7 +339,7 @@ void	parser(t_shell	*shell)
 	else
 		return ;
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
-	get_env_var(shell, shell->com_struct);
+	process_quotes_in_commands(shell->com_struct);
 	print_parser(shell->com_struct);
 	
 }
