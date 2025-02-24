@@ -12,7 +12,7 @@ int	syntax_check(t_shell *shell)
 {
 	if (!operator_placement(shell))
 	{
-	//	printf("Operators place correct\n");
+		//printf("Operators place correct\n");
 	}
 	else
 		return (42);

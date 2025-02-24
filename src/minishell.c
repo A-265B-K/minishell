@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/11 17:29:41 by wdpk          ########   odam.nl         */
+/*   Updated: 2025/02/24 13:04:02 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ void	set_prompt(t_shell *shell)
 	if (shell->prompt)
 		free(shell->prompt);
 	prompt_line = env_get("USER", shell->envp);
-	prompt_line = free_join(prompt_line, " @ ", true, false);
+	prompt_line = free_join(prompt_line, "@", true, false);
 	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), true, true);
-	prompt_line = free_join(prompt_line, " :", true, false);
+	prompt_line = free_join(prompt_line, ": ", true, false);
 	shell->prompt = ft_strdup(prompt_line);
 	free (prompt_line);
 }
