@@ -48,6 +48,8 @@ char	**alloc_double(char **envp);
 int		ft_strarrlen(char **arr);
 void	free_double(char **str);
 
+static void redirection_dup(t_shell *shell, t_commands *cmd);
+char	*ft_getenv(const char *name);
 int	ft_unsetenv(char **params);
 int ft_pwd(void);
 int ft_echo(char **params);
