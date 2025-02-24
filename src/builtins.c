@@ -8,7 +8,7 @@ int	ft_pwd()
 	return (0);
 }
 
-int ft_echo(char **params, t_shell *shell)
+int ft_echo(char **params)
 {
 	int	i;
 	int	j;
@@ -20,17 +20,6 @@ int ft_echo(char **params, t_shell *shell)
 			j = 0;
 			if (i > 0)
 				printf(" ");
-			if (params[i][0] == '$' && !params[i][1])
-			{
-				printf("$");
-				j += 1;
-			}
-			else if (params[i][0] == '$')
-			{
-				if (params[i][1] == '?')
-					printf("%d", shell->exitcode);
-				j += 2;
-			}
 			printf("%s", params[i] + j);
 			i += 1;
 		}

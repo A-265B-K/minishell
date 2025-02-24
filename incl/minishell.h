@@ -27,6 +27,10 @@
 # else
 #  include <limits.h>
 # endif
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h> 
+#include <unistd.h>
 
 # include "../libft/libft.h"
 # include <readline/readline.h>
@@ -44,8 +48,24 @@ char	**alloc_double(char **envp);
 int		ft_strarrlen(char **arr);
 void	free_double(char **str);
 
+int	ft_unsetenv(char **params);
+int ft_pwd(void);
+int ft_echo(char **params);
+int ft_env(void);
+int ft_export(char **params);
+int ft_cd(char **params);
+void ft_exit(char **params, int exitcode);
+int ft_isstrnum(char *str);
+int ft_strcmp(const char *s1, const char *s2);
+int ft_setenv(const char *name, const char *value);
+char **ft_split(const char *str, char delimiter);
+void ft_bzero(void *s, size_t n);
+size_t ft_strlcpy(char *dst, const char *src, size_t dstsize);
+int ft_isdigit(int c);
+int ft_atoi(const char *str);
+int ft_setenv(const char *name, const char *value);
 char	*env_get(char *str, char *envp[]);
-
+const char *const *borrow_env(void);
 int	lexer(t_shell *shell);
 t_token *tokenize_input(const char *input);
 int	handle_operator(const char *input, int i, t_token **head, int *id);
@@ -53,7 +73,7 @@ int	handle_quotes(const char *input, int start, t_token **head, int *id);
 int handle_word(const char *input, int i, t_token **head, int *id);
 int	is_operator(char c);
 t_operators	identify_operator(char c, char c_plus);
-
+int	ft_strcmp2(const char *s1, const char *s2);
 void	free_tokens(t_token *head);
 void token_add_back(t_token **head, t_token *new_token);
 t_token *create_token(char *str, char c, int id, t_operators token);

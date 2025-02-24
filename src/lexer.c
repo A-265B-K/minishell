@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/12/02 15:06:43 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/02/11 17:25:45 by wdpk          ########   odam.nl         */
+/*   Updated: 2025/02/24 13:03:34 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,6 @@ int	lexer(t_shell *shell)
 	shell->tokenized = tokenize_input(shell->input);
 	// print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);
-   // print_grouped(shell->lexer_grouped);
+  //  print_grouped(shell->lexer_grouped);
 	return (1);
 }
