@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/24 13:10:28 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/24 16:07:24 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,39 @@
 
 int	ft_strcmp2(const char *s1, const char *s2)
 {
-	while (*s1 && *s1 == *s2)
+	if (!s1 || !s2)
+		return (s1 ? 1 : (s2 ? -1 : 0));
+	while (*s1 && *s2)
 	{
+		if (*s1 != *s2)
+			return ((unsigned char)(*s1) - (unsigned char)(*s2));
 		s1++;
 		s2++;
 	}
 	return ((unsigned char)(*s1) - (unsigned char)(*s2));
 }
 
-void	execute_builtin(t_shell *shell, t_commands *cmd)
+
+char *ft_strjoin3(const char *s1, const char *s2, const char *s3)
 {
+    char *res;
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+    size_t len3 = strlen(s3);
+
+    res = malloc(len1 + len2 + len3 + 1);
+    if (!res)
+        return (NULL);
+    strcpy(res, s1);
+    strcat(res, s2);
+    strcat(res, s3);
+    return (res);
+}
+
+
+int	execute_builtin(t_shell *shell, t_commands *cmd, int pipe_fd)
+{
+	(void)pipe_fd;
 	if (!ft_strcmp2(cmd->builtin, "pwd"))
 		shell->exitcode = ft_pwd();
 	else if (!ft_strcmp2(cmd->builtin, "echo"))
@@ -38,6 +61,9 @@ void	execute_builtin(t_shell *shell, t_commands *cmd)
 		shell->exitcode = ft_env();
 	else if (!ft_strcmp2(cmd->builtin, "exit"))
 		ft_exit(cmd->str, shell->exitcode);
+	else
+		return (0);
+	return (1);
 }
 
 int	is_dir(const char *file_path)
@@ -47,117 +73,6 @@ int	is_dir(const char *file_path)
 	if (!stat(file_path, &path_stat))
 		return (0);
 	return (S_ISDIR(path_stat.st_mode));
-}
-
-int	execute_cmd(t_shell *shell, t_commands *cmd)
-{
-	char	*file_path;
-	int		status;
-	char	buf[100];
-	char	*function_name;
-
-	if (cmd->builtin)
-	{
-		execute_builtin(shell, cmd);
-		exit(0);
-	}
-	if (cmd->str[0][0] == '/' || cmd->str[0][0] == '.')
-	{
-		if (cmd->str[0][0] == '/')
-			file_path = ft_strjoin("/", cmd->str[0] + 1);
-		else if (cmd->str[0][0] == '.')
-		{
-			file_path = ft_strjoin(getcwd(buf, 100), cmd->str[0] + 1);
-		}
-		if (access(file_path, F_OK))
-		{
-			dprintf(2, " No such file or directory\n");
-			return (127);
-		}
-		if (access(file_path, R_OK) || access(file_path, W_OK) || access(file_path, X_OK))
-		{
-			dprintf(2, " Permission denied\n");
-			return (126);
-		}
-		if (!is_dir(file_path))
-		{
-			dprintf(2, " Is a directory\n");
-			return (126);
-		}
-	}
-	pid_t	pid = fork();
-	if (pid == 0)
-	{
-		function_name = ft_strjoin("/usr/bin/", cmd->str[0]);
-		if (execve(function_name, cmd->str, (char *const *)borrow_env()) == -1)
-		{
-			dprintf(2, " command not found\n");
-			free(function_name);
-			exit(127);
-		}
-	}
-	else
-	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			return WEXITSTATUS(status);
-		else
-			return (1);
-	}
-	return 0;
-}
-
-int	redirect_and_execute(t_shell *shell, t_commands *cmd)
-{
-	int out_fd;
-	pid_t pid;
-	char *str = cmd->redirection;
-
-	if (cmd->builtin && !cmd->next)
-	{
-		execute_builtin(shell, cmd);
-		return 0;
-	}
-	if (!cmd->next)
-	{
-		shell->exitcode = execute_cmd(shell, cmd);
-		return 0;
-	}
-	if (str)
-	{
-		if (str[1] == '>')
-			out_fd = open(str + 2, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		else
-			out_fd = open(str + 1, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (out_fd < 0)
-		{
-			perror("Open");
-			return 1;
-		}
-	}
-	else
-	{
-		out_fd = STDOUT_FILENO;
-	}
-	pid = fork();
-	if (pid == 0)
-	{
-		if (out_fd >= 0 && out_fd != STDOUT_FILENO)
-		{
-			dup2(out_fd, STDOUT_FILENO);
-			close(out_fd);
-		}
-		exit(execute_cmd(shell, cmd));
-	}
-	else
-	{
-		waitpid(pid, NULL, 0);
-		if (out_fd != STDOUT_FILENO)
-		{
-			close(out_fd);
-		}
-	}
-	return (0);
 }
 
 void	debug_fds(const char *msg)
@@ -170,104 +85,163 @@ void	debug_fds(const char *msg)
 	}
 }
 
-int	execute_pipes(t_commands *cmd, int input_fd, t_shell *shell)
+int	execute_string(t_shell *shell, t_commands *cmd, char *str, int pipe_fd)
 {
-	int pipe_fd[2];
-	pid_t pid;
-	int out_fd = STDOUT_FILENO;
-	char *str = cmd->redirection;
+	pid_t	pid;
 
-	if (cmd->next == NULL)
+	(void)shell;
+	if (!pipe_fd)
+		pid = fork();
+	if (!pipe_fd && pid < 0)
 	{
-		if (str)
-		{
-			if (str[1] == '>')
-				out_fd = open(str + 2, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			else
-				out_fd = open(str + 1, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			if (out_fd < 0)
-			{
-				perror("Open");
-				return (-1);
-			}
-		}
-		if (input_fd != STDIN_FILENO)
-		{
-			dup2(input_fd, STDIN_FILENO);
-			//close(input_fd);
-		}
-		if (out_fd != STDOUT_FILENO)
-		{
-			dup2(out_fd, STDOUT_FILENO);
-			close(out_fd);
-		}
-		return (execute_cmd(shell, cmd));
-	}
-	if (pipe(pipe_fd) < 0)
-	{
-		perror("Pipe");
+		free(str);
+		dprintf(2, "execve: failed to fork\n");
 		return (-1);
 	}
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("Fork");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		close(pipe_fd[0]);
-		dup2(input_fd, STDIN_FILENO);
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[1]);
-		if (str)
-		{
-			if (str[1] == '>')
-				out_fd = open(str + 2, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			else
-				out_fd = open(str + 1, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			if (out_fd < 0)
-			{
-				perror("Open");
-				exit(1);
-			}
-			dup2(out_fd, STDOUT_FILENO);
-			close(out_fd);
-		}
-		if (execute_cmd(shell, cmd) == -1)
-		{
-			exit(1);
-		}
-		exit(0);
-	}
-	close(pipe_fd[1]);
-	if (input_fd != STDIN_FILENO)
-	{
-		close(input_fd);
-	}
-	waitpid(pid, NULL, 0);
-	return (execute_pipes(cmd->next, pipe_fd[0], shell));
+	else if(!pid)
+		execve(str, cmd->str, (char *const *)borrow_env());
+	free(str);
+	if (pipe_fd)
+		return (1);
+	if (ft_strcmp2(cmd->str[0], "./minishell"))
+		signal(SIGINT, SIG_IGN);
+	wait(&pid);
+	//status_child();
+	pid = 0;
+	return (1);
 }
 
-int	handle_pipes(t_shell *shell, t_commands *cmd)
+int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf, int pipe_fd)
 {
-	execute_pipes(cmd, STDIN_FILENO, shell);
+	if (statbuf.st_mode & S_IFREG)
+	{
+		if (statbuf.st_mode & S_IXUSR)
+			return (execute_string(shell, cmd, bin, pipe_fd));
+		else
+		{
+			dprintf(2, "minishell: execve: permission denied: %s\n", bin);
+		//	g_status = 1;
+		}
+		free(bin);
+		return (1);
+	}
+	else
+	{
+		dprintf(2, "minishell: %s : Is a directory\n", cmd->str[1]);
+	//	g_status = 1;
+	}
+	free(bin);
+	return (1);
+}
+
+int	execute_binaries(t_shell *shell, t_commands *cmd, int	pipe_fd)
+{
+	struct stat	statbuf;
+	char		*path_env;
+	char		*path;
+	char		*bin;
+	char		*saveptr;
+
+	// MAKE STRTOK_R
+
+	path_env = ft_getenv("PATH");
+	if (!path_env || !*path_env)
+		return (-1);
+	path = strtok_r(path_env, ":", &saveptr);
+	while (path)
+	{
+		bin = ft_strjoin3(path, "/", cmd->str[0]);
+		if (!lstat(bin, &statbuf))
+		{
+			free(path_env);
+			return (check_perms(shell, cmd, bin, statbuf, pipe_fd));
+		}
+		free(bin);
+		path = strtok_r(NULL, ":", &saveptr);  // Get next path
+	}
+	free(path_env);
 	return (0);
+}
+
+static int	execute_files(t_shell *shell, t_commands *cmd, int pipe_fd)
+{
+	struct stat f;
+	int			flag;
+	
+	if (lstat(cmd->str[0], &f) != -1)
+	{
+		flag = f.st_mode & S_IFMT;
+		if (flag == S_IFDIR && (cmd->str[0][ft_strlen(cmd->str[0]) - 1] == '/' || ft_strncmp(cmd->str[0], "./", 2) == 0))
+		{
+			shell->exitcode = 126;
+			return (dprintf(2, " Is a directory\n"));
+		}
+		else if ((f.st_mode & S_IXUSR) && (f.st_mode & S_IRUSR) && (cmd->str[0][0] == '/' || ft_strncmp(cmd->str[0], "./", 2) == 0))
+			return(execute_string(shell, cmd, ft_strdup(cmd->str[0]), pipe_fd));
+		else if (flag != S_IXUSR && flag != S_IRUSR && flag != S_IFDIR && flag != S_IFLNK)
+		{
+			shell->exitcode = 126;
+			return(dprintf(2, " Permission denied\n"));
+		}
+	}
+	else if (ft_strncmp(cmd->str[0], "./", 2) == 0 || cmd->str[0][0] == '/')
+	{
+		shell->exitcode = 127;
+		return (dprintf(2, " No such file or directory\n"));
+	}
+	shell->exitcode = 127;
+	return (dprintf(2, " command not found\n"));
+}
+
+
+int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd)
+{
+	char *path;
+
+	(void)pipe_fd;
+	path = ft_getenv("PATH");
+	if (ft_strcmp2(cmd->str[0], "whoami") && !path)
+	{
+		shell->exitcode = 127;
+		return(printf("No such file or directory\n"));
+	}
+	free(path);
+	if (execute_builtin(shell, cmd, pipe_fd) || execute_binaries(shell, cmd, pipe_fd))
+		return (1);
+	else
+	 	execute_files(shell, cmd, pipe_fd); // check() exec.c
+	return (0);
+}
+
+// static void	redirect_dup()
+// {
+	
+// }
+
+void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
+{
+	if (cmd->redirection)
+		redirection_dup(shell, cmd);
+	else
+		execute_cmd(shell, cmd, pipe_fd);
 }
 
 int	execute(t_shell *shell)
 {
+	int	fdd;
+	int	i;
 	t_commands	*cmd = shell->com_struct;
 
-	if (cmd->next)
+	fdd = dup(0);
+	i = 0;
+	while (cmd)
 	{
-		handle_pipes(shell, cmd);
-	}
-	else
-	{
-		redirect_and_execute(shell, cmd);
+		// if (list->pipecell!=NULL)
+		// else 
+		redirect_and_execute(shell, cmd, 0);
+		// free cmd
+
+		cmd = cmd->next;
 	}
 	return (0);
 }
