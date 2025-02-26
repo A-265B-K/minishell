@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>                +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/12/20 12:41:34 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/02/24 13:03:09 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/26 16:31:25 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ char	*search_env(char **env, char *target)
 char *expand_env_var(const char *var)
 {
     char *value;
-	
+
 	value = getenv(var);
     if (!value)
         return (ft_strdup(""));
@@ -238,13 +238,34 @@ static void toggle_quotes(char c, int *in_single, int *in_double)
 		*in_double = !(*in_double);
 }
 
-static int handle_variable_expansion(const char *input, int *i, char **result, int *j)
+int	handle_exitcode(char **result, char *expand, int *j, int *i, t_shell *shell)
+{
+	expand = ft_itoa(shell->exitcode);
+	if (!expand)
+		return (0);
+	int new_size = ft_strlen(*result) + ft_strlen(expand) + 1;
+	*result = realloc(*result, new_size);
+	if (!*result)
+	{
+		free(expand);
+		return (0);
+	}
+	memcpy(&(*result)[*j], expand, ft_strlen(expand));
+	*j += ft_strlen(expand);
+	free(expand);
+	*i += 1;
+	return (1);
+}
+static int handle_variable_expansion(const char *input, int *i, char **result, int *j, t_shell *shell)
 {
     char	*var_name;
     char	*expand;
     int		start;
     int		len;
 
+	expand = NULL;
+	if (input[*i + 1] == '?')
+		return (handle_exitcode(result, expand, i, j, shell));
     start = *i + 1;
     while (ft_isalnum(input[start]) || input[start] == '_')
         start++;
@@ -275,7 +296,7 @@ static int handle_variable_expansion(const char *input, int *i, char **result, i
 }
 
 
-char *remove_quotes(const char *input)
+char *remove_quotes(const char *input, t_shell *shell)
 {
     int i = 0;
 	int	j = 0;
@@ -291,7 +312,7 @@ char *remove_quotes(const char *input)
         toggle_quotes(input[i], &in_single, &in_double);
         if (input[i] == '$' && !in_single)
 		{
-            if (handle_variable_expansion(input, &i, &result, &j))
+            if (handle_variable_expansion(input, &i, &result, &j, shell))
 				break ;
 		}
         else if (!(input[i] == '\'' && !in_double) && !(input[i] == '"' && !in_single))
@@ -302,7 +323,7 @@ char *remove_quotes(const char *input)
     return (result);
 }
 
-void process_quotes_in_commands(t_commands *cmd)
+void process_quotes_in_commands(t_commands *cmd, t_shell *shell)
 {
 	int	i;
 	char *temp;
@@ -314,14 +335,14 @@ void process_quotes_in_commands(t_commands *cmd)
 	{
 		if (cmd->builtin)
 		{
-			temp = remove_quotes(cmd->builtin);
+			temp = remove_quotes(cmd->builtin, shell);
 			free(cmd->builtin);
 			cmd->builtin = temp;
 		}
 		i = 0;
 		while (cmd->str && cmd->str[i])
 		{
-			temp_b = remove_quotes(cmd->str[i]);
+			temp_b = remove_quotes(cmd->str[i], shell);
 			free(cmd->str[i]);
 			cmd->str[i] = temp_b;
 			i++;
@@ -339,7 +360,7 @@ void	parser(t_shell	*shell)
 	else
 		return ;
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
-	process_quotes_in_commands(shell->com_struct);
+	process_quotes_in_commands(shell->com_struct, shell);
 	//print_parser(shell->com_struct);
 	
 }

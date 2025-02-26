@@ -14,7 +14,7 @@ int ft_echo(char **params)
 	int	j;
 
 	i = 0;
-	if (params)
+	if (params && params[0])
 		while (params[i])
 		{
 			j = 0;
