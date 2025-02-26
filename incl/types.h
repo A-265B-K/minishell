@@ -49,16 +49,29 @@ typedef struct s_token
 	struct s_token			*prev;
 }	t_token;
 
+typedef struct s_redirects
+{
+	char	*sstdin;
+	char	*sstdout;
+	char	*sstderr;
+	int		in_fd;
+	int		out_fd;
+	int		err_fd;
+} t_redirects;
+
 typedef struct s_commands
 {
 	char	**str;
 	char	*builtin;
 	t_token	*tokenized;
 	char	*redirection;
+	t_redirects redirects;
 	int		id;
 	struct	s_commands	*next;
 	struct	s_commands	*prev;
 }	t_commands;
+
+
 
 typedef struct s_error
 {

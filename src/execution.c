@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/24 16:07:24 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/26 19:16:01 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,10 @@ int	execute_builtin(t_shell *shell, t_commands *cmd, int pipe_fd)
 	else if (!ft_strcmp2(cmd->builtin, "exit"))
 		ft_exit(cmd->str, shell->exitcode);
 	else
+	{
+	//	dprintf(2, "builtin not executed\n");
 		return (0);
+	}
 	return (1);
 }
 
@@ -99,13 +102,17 @@ int	execute_string(t_shell *shell, t_commands *cmd, char *str, int pipe_fd)
 		return (-1);
 	}
 	else if(!pid)
+	{
 		execve(str, cmd->str, (char *const *)borrow_env());
+		// errpr msg
+		exit(127);
+	}
 	free(str);
 	if (pipe_fd)
 		return (1);
 	if (ft_strcmp2(cmd->str[0], "./minishell"))
 		signal(SIGINT, SIG_IGN);
-	wait(&pid);
+	waitpid(pid, NULL, 0);
 	//status_child();
 	pid = 0;
 	return (1);
@@ -113,6 +120,8 @@ int	execute_string(t_shell *shell, t_commands *cmd, char *str, int pipe_fd)
 
 int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf, int pipe_fd)
 {
+	// if (!cmd->str[1])
+	// 	return (1);
 	if (statbuf.st_mode & S_IFREG)
 	{
 		if (statbuf.st_mode & S_IXUSR)
@@ -194,12 +203,14 @@ static int	execute_files(t_shell *shell, t_commands *cmd, int pipe_fd)
 }
 
 
-int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd)
+int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd) // make this exit with cmd exitcode
 {
 	char *path;
 
 	(void)pipe_fd;
 	path = ft_getenv("PATH");
+	if (!cmd->str)
+		cmd->str = (char **)ft_strdup("");
 	if (ft_strcmp2(cmd->str[0], "whoami") && !path)
 	{
 		shell->exitcode = 127;
@@ -213,10 +224,99 @@ int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd)
 	return (0);
 }
 
-// static void	redirect_dup()
-// {
-	
-// }
+static void	clean_redir(t_commands *cmd, int sin, int sout, int serr)
+{
+	if (cmd->redirects.in_fd)
+		dup2(sin, 0);
+	if (cmd->redirects.out_fd)
+		dup2(sout, 1);
+	if (cmd->redirects.err_fd)
+		dup2(serr, 2);
+}
+
+static void redirection_dup(t_shell *shell, t_commands *cmd)
+{
+	int	s_stdin;
+	int	s_stdout;
+	int	s_stderr;
+
+	(void)shell;
+	if (!(s_stdin = 0) && cmd->redirects.in_fd >= 0)
+	{
+		s_stdin = dup(0);
+		close(0);
+		dup2(cmd->redirects.in_fd, 0);
+	}
+	if (!(s_stdout = 0) && cmd->redirects.sstdout)
+	{
+		s_stdout = dup(1);
+		close(1);
+		dup2(cmd->redirects.out_fd, 1);
+	}
+	if (!(s_stderr = 0) && cmd->redirects.sstderr)
+	{
+		s_stderr = dup(2);
+		close(2);
+		dup2(cmd->redirects.err_fd, 2);
+	}
+	execute_cmd(shell, cmd, 0);
+	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
+}
+
+static void	execute_child(t_commands *cmd, int fd[2], int *pipe_fd) // look up dup2
+{
+	close(fd[0]);
+	close(0);
+	dup(*pipe_fd);
+	close(*pipe_fd);
+	if (cmd->next)
+	{
+		close(1);
+		dup(fd[1]);
+		close(fd[1]);
+	}
+}
+
+
+int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
+{
+	int fd[2];
+	int	pid;
+
+	if (pipe(fd))
+		return (-1);
+	pid = fork();
+	if (pid < 0)
+	{
+		close(fd[0]);
+		close(fd[1]);
+		close(pipe_fd);
+		return (-1);
+	}
+	else if (!pid)
+	{
+		execute_child(cmd, fd, &pipe_fd);
+		exit(execute_cmd(shell, cmd, pipe_fd));
+	}
+//	wait(&pid);
+	//check_child();
+	close(pipe_fd);
+	close(fd[1]);
+	return(fd[0]);
+}
+
+static void execute_pipe(t_shell *shell, t_commands *cmd, int *pipe_fd)
+{
+    int new_pipe_fd;
+
+    new_pipe_fd = run_pipe(shell, cmd, *pipe_fd);
+
+    if (*pipe_fd != 0)
+        close(*pipe_fd);
+
+    *pipe_fd = new_pipe_fd;
+}
+
 
 void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
 {
@@ -226,22 +326,117 @@ void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
 		execute_cmd(shell, cmd, pipe_fd);
 }
 
+char	*ft_strlcpy2(char *str, int	c)
+{
+	char *out;
+	int		i;
+
+	i = 0;
+	out = malloc(ft_strlen(str) - c + 1);
+	if (!out)
+		return (NULL);
+	while (str[c])
+		out[i++] = str[c++];
+	out[i] = '\0';
+	return (out); 
+}
+
+void	handle_redirects(t_commands *cmd)
+{
+	char	*file = NULL;
+	int		type;
+
+	if (cmd->redirection)
+	{
+		if (cmd->redirection[1] == '>')
+			type = 3;
+		else if (cmd->redirection[0] == '>')
+			type = 2;
+		else
+			type = 1;
+
+		if (type == 3)
+			file = ft_strlcpy2(cmd->redirection, 2);
+		else
+			file = ft_strlcpy2(cmd->redirection, 1);
+		if (!file)
+		{
+			// handle proper exit
+			return ;
+		}
+		else
+{
+	if (type == 1)  // Input Redirection (<)
+	{
+		cmd->redirects.sstdin = file;
+		cmd->redirects.in_fd = open(file, O_RDONLY);
+		if (cmd->redirects.in_fd == -1)
+		{
+			perror("open failed for input redirection");
+			return;  // Handle error properly
+		}
+	}
+	else
+	{
+		cmd->redirects.sstdin = NULL;
+		cmd->redirects.in_fd = -1;
+	}
+
+	if (type == 2)  // Output Redirecshell_ittion (>)
+	{
+		cmd->redirects.sstdout = file;
+		cmd->redirects.out_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (cmd->redirects.out_fd == -1)
+		{
+			perror("open failed for output redirection");
+			return;
+		}
+	}
+	else
+	{
+		cmd->redirects.sstdout = NULL;
+		cmd->redirects.out_fd = -1;
+	}
+
+	if (type == 3)  // Append Redirection (>>)
+	{
+		cmd->redirects.sstderr = file;
+		cmd->redirects.err_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (cmd->redirects.err_fd == -1)
+		{
+			perror("open failed for append redirection");
+			return;
+		}
+	}
+	else
+	{
+		cmd->redirects.sstderr = NULL;
+		cmd->redirects.err_fd = -1;
+	}
+}
+
+	}
+}
+
 int	execute(t_shell *shell)
 {
-	int	fdd;
+	int	pipe_fd;
 	int	i;
 	t_commands	*cmd = shell->com_struct;
 
-	fdd = dup(0);
+
 	i = 0;
 	while (cmd)
 	{
-		// if (list->pipecell!=NULL)
-		// else 
-		redirect_and_execute(shell, cmd, 0);
+		handle_redirects(cmd);
+		if (cmd->next)
+			execute_pipe(shell, cmd, &pipe_fd);
+		else // implement security chck
+			redirect_and_execute(shell, cmd, 0);
 		// free cmd
 
 		cmd = cmd->next;
 	}
+	// close fd
 	return (0);
 }

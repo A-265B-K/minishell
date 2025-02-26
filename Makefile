@@ -5,7 +5,7 @@ RESET   	= \033[0m
 
 NAME	= minishell
 CC		= cc
-CFLAGS	= -Werror -Wextra -Wall -Wunreachable-code -march=native -g
+CFLAGS	= -Werror -Wextra -Wall -march=native -g
 INC		= -I ./incl/
 SRC_PATH	= src/
 SRC 		= $(wildcard $(SRC_PATH)*/*.c) $(wildcard $(SRC_PATH)/*.c)
