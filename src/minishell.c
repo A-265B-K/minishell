@@ -6,7 +6,7 @@
 /*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/26 15:06:55 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/28 17:59:27 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int	main(int argc, char **argv, char **envp)
 		parser(shell);
 		if (!ft_strncmp(shell->input, "parserleak", 10))
 			break ;
+	//m	printf("Exitcode: %d\n", shell->exitcode);
 		execute(shell);
 	}
 	close_shell(shell);

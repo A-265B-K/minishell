@@ -17,6 +17,7 @@ int ft_echo(char **params)
 	if (params && params[0])
 		while (params[i])
 		{
+	//		printf("echo: %s\n", params[i]);
 			j = 0;
 			if (i > 0)
 				printf(" ");

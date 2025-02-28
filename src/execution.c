@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/26 19:16:01 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/28 18:12:04 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf
 		else
 		{
 			dprintf(2, "minishell: execve: permission denied: %s\n", bin);
-		//	g_status = 1;
+			shell->exitcode = 1;
 		}
 		free(bin);
 		return (1);
@@ -137,7 +137,7 @@ int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf
 	else
 	{
 		dprintf(2, "minishell: %s : Is a directory\n", cmd->str[1]);
-	//	g_status = 1;
+		shell->exitcode = 1;
 	}
 	free(bin);
 	return (1);
@@ -259,7 +259,7 @@ static void redirection_dup(t_shell *shell, t_commands *cmd)
 		close(2);
 		dup2(cmd->redirects.err_fd, 2);
 	}
-	execute_cmd(shell, cmd, 0);
+	shell->exitcode = execute_cmd(shell, cmd, 0);
 	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
 }
 
@@ -366,10 +366,10 @@ void	handle_redirects(t_commands *cmd)
 		}
 		else
 {
-	if (type == 1)  // Input Redirection (<)
+	if (type == 1)  // Input Redirection (<) // fix this part that it hangs
 	{
 		cmd->redirects.sstdin = file;
-		cmd->redirects.in_fd = open(file, O_RDONLY);
+		cmd->redirects.in_fd = open(file, O_EXCL | O_RDONLY);
 		if (cmd->redirects.in_fd == -1)
 		{
 			perror("open failed for input redirection");

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>                +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/12/20 12:41:34 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/02/26 16:31:25 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/02/28 17:57:55 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,9 +238,10 @@ static void toggle_quotes(char c, int *in_single, int *in_double)
 		*in_double = !(*in_double);
 }
 
-int	handle_exitcode(char **result, char *expand, int *j, int *i, t_shell *shell)
+int	handle_exitcode(char **result, char *expand, int *i, int *j, t_shell *shell)
 {
 	expand = ft_itoa(shell->exitcode);
+	//printf("exitcode as a string: %s\n", expand);
 	if (!expand)
 		return (0);
 	int new_size = ft_strlen(*result) + ft_strlen(expand) + 1;
@@ -248,13 +249,16 @@ int	handle_exitcode(char **result, char *expand, int *j, int *i, t_shell *shell)
 	if (!*result)
 	{
 		free(expand);
-		return (0);
+		return (1);
 	}
 	memcpy(&(*result)[*j], expand, ft_strlen(expand));
+	//printf("exitcode as a result: %s\n", result[0]);
 	*j += ft_strlen(expand);
+	//printf("j: %d\n", *j);
 	free(expand);
 	*i += 1;
-	return (1);
+	//printf("exitcode in handle_exitcode: %d\n", shell->exitcode);
+	return (0);
 }
 static int handle_variable_expansion(const char *input, int *i, char **result, int *j, t_shell *shell)
 {
@@ -314,6 +318,8 @@ char *remove_quotes(const char *input, t_shell *shell)
 		{
             if (handle_variable_expansion(input, &i, &result, &j, shell))
 				break ;
+			// printf("exitcode as a string2: %s\n", result);
+			// printf("j: %d\n", j);
 		}
         else if (!(input[i] == '\'' && !in_double) && !(input[i] == '"' && !in_single))
             result[j++] = input[i];
@@ -338,6 +344,7 @@ void process_quotes_in_commands(t_commands *cmd, t_shell *shell)
 			temp = remove_quotes(cmd->builtin, shell);
 			free(cmd->builtin);
 			cmd->builtin = temp;
+		//	printf("exitcode in proccess_quotes: %s\n", cmd->str[0]);
 		}
 		i = 0;
 		while (cmd->str && cmd->str[i])
@@ -361,6 +368,7 @@ void	parser(t_shell	*shell)
 		return ;
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
 	process_quotes_in_commands(shell->com_struct, shell);
+	//printf("exitcode in parser: %s\n", shell->com_struct->str[0]);
 	//print_parser(shell->com_struct);
 	
 }
