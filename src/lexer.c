@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   lexer.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/12/02 15:06:43 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/02/24 13:03:34 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
+/*   Updated: 2025/02/28 01:20:06 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ int group_quotes(t_token **current, char c)
 
 int	quote_group(t_token **current, t_lexer_tools *tools, t_token **lexer_grouped)
 {
-	tools->quote_flag = 1;
+    (void)lexer_grouped;
     tools->quote_type = (*current)->c;
     append_to_buffer(tools, (*current)->c);
     (*current) = (*current)->next;
@@ -197,9 +197,8 @@ int	quote_group(t_token **current, t_lexer_tools *tools, t_token **lexer_grouped
     }
     if((*current) && ((*current)->c == tools->quote_type || (*current)->c == tools->quote_type))
     {
-    	tools->quote_flag = 0;
         append_to_buffer(tools, (*current)->c);
-        finalize_token(lexer_grouped, tools, O_G_WORD);
+        // finalize_token(lexer_grouped, tools, O_G_WORD);
         (*current) = (*current)->next;
         return (0);
     }
@@ -256,6 +255,6 @@ int	lexer(t_shell *shell)
 	shell->tokenized = tokenize_input(shell->input);
 	// print_tokens(shell->tokenized);
     shell->lexer_grouped = group_tokens(shell->tokenized);
-  //  print_grouped(shell->lexer_grouped);
+    // print_grouped(shell->lexer_grouped);
 	return (1);
 }

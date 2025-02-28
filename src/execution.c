@@ -1,5 +1,6 @@
 /* ************************************************************************** */
 /*                                                                            */
+<<<<<<< HEAD
 /*                                                        ::::::::            */
 /*   execution.c                                        :+:    :+:            */
 /*                                                     +:+                    */
@@ -7,6 +8,15 @@
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
 /*   Updated: 2025/02/28 18:12:04 by alkuijte      ########   odam.nl         */
+=======
+/*                                                        :::      ::::::::   */
+/*   execution.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/09 16:30:42 by alkuijte          #+#    #+#             */
+/*   Updated: 2025/02/27 21:05:06 by marvin           ###   ########.fr       */
+>>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -421,11 +431,11 @@ void	handle_redirects(t_commands *cmd)
 int	execute(t_shell *shell)
 {
 	int	pipe_fd;
-	int	i;
+	// int	i;
 	t_commands	*cmd = shell->com_struct;
 
 
-	i = 0;
+	// i = 0;
 	while (cmd)
 	{
 		handle_redirects(cmd);

@@ -1,5 +1,6 @@
 /* ************************************************************************** */
 /*                                                                            */
+<<<<<<< HEAD
 /*                                                        ::::::::            */
 /*   parser.c                                           :+:    :+:            */
 /*                                                     +:+                    */
@@ -7,6 +8,15 @@
 /*                                                   +#+                      */
 /*   Created: 2024/12/20 12:41:34 by ahornstr      #+#    #+#                 */
 /*   Updated: 2025/02/28 17:57:55 by alkuijte      ########   odam.nl         */
+=======
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/20 12:41:34 by ahornstr          #+#    #+#             */
+/*   Updated: 2025/02/28 01:20:01 by marvin           ###   ########.fr       */
+>>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +236,7 @@ char *expand_env_var(const char *var)
 
 	value = getenv(var);
     if (!value)
-        return (ft_strdup(""));
+        return ("");
     return (ft_strdup(value));
 }
 
@@ -251,8 +261,12 @@ int	handle_exitcode(char **result, char *expand, int *i, int *j, t_shell *shell)
 		free(expand);
 		return (1);
 	}
+<<<<<<< HEAD
 	memcpy(&(*result)[*j], expand, ft_strlen(expand));
 	//printf("exitcode as a result: %s\n", result[0]);
+=======
+	memcpy(&(*result)[*j++], expand, ft_strlen(expand));
+>>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
 	*j += ft_strlen(expand);
 	//printf("j: %d\n", *j);
 	free(expand);
@@ -266,10 +280,12 @@ static int handle_variable_expansion(const char *input, int *i, char **result, i
     char	*expand;
     int		start;
     int		len;
-
+	
 	expand = NULL;
 	if (input[*i + 1] == '?')
-		return (handle_exitcode(result, expand, i, j, shell));
+	{
+		handle_exitcode(result, expand, i, j, shell);
+	}
     start = *i + 1;
     while (ft_isalnum(input[start]) || input[start] == '_')
         start++;
@@ -318,8 +334,12 @@ char *remove_quotes(const char *input, t_shell *shell)
 		{
             if (handle_variable_expansion(input, &i, &result, &j, shell))
 				break ;
+<<<<<<< HEAD
 			// printf("exitcode as a string2: %s\n", result);
 			// printf("j: %d\n", j);
+=======
+			result[j++] = input[i];
+>>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
 		}
         else if (!(input[i] == '\'' && !in_double) && !(input[i] == '"' && !in_single))
             result[j++] = input[i];
@@ -368,7 +388,11 @@ void	parser(t_shell	*shell)
 		return ;
 	shell->com_struct = parse_tokens(shell->lexer_grouped);
 	process_quotes_in_commands(shell->com_struct, shell);
+<<<<<<< HEAD
 	//printf("exitcode in parser: %s\n", shell->com_struct->str[0]);
 	//print_parser(shell->com_struct);
+=======
+	// print_parser(shell->com_struct);
+>>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
 	
 }
