@@ -1,22 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-<<<<<<< HEAD
 /*                                                        ::::::::            */
 /*   execution.c                                        :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/28 18:12:04 by alkuijte      ########   odam.nl         */
-=======
-/*                                                        :::      ::::::::   */
-/*   execution.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/09 16:30:42 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/02/27 21:05:06 by marvin           ###   ########.fr       */
->>>>>>> 928745dfe7f2a9abd351febd5f8e4f8f76dd0349
+/*   Updated: 2025/03/01 16:27:26 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,17 +118,29 @@ int	execute_string(t_shell *shell, t_commands *cmd, char *str, int pipe_fd)
 	return (1);
 }
 
+int	redirection_permission(t_commands *cmd)
+{
+	t_redirects r;
+
+	r = cmd->redirects;
+	//printf("Permissions: %d %d %d\n", r.out_fd, r.in_fd, r.err_fd);
+	if ((r.sstdin != NULL && r.in_fd < 0) || (r.sstdout != NULL && r.out_fd < 0) || (r.sstderr != NULL && r.err_fd < 0))
+		return (0);
+	else
+		return (1);
+}
+
 int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf, int pipe_fd)
 {
 	// if (!cmd->str[1])
 	// 	return (1);
 	if (statbuf.st_mode & S_IFREG)
 	{
-		if (statbuf.st_mode & S_IXUSR)
+		if (statbuf.st_mode & S_IXUSR && redirection_permission(cmd))
 			return (execute_string(shell, cmd, bin, pipe_fd));
 		else
 		{
-			dprintf(2, "minishell: execve: permission denied: %s\n", bin);
+			//dprintf(2, "minishell: execve: Permission denied\n");
 			shell->exitcode = 1;
 		}
 		free(bin);
@@ -273,18 +275,21 @@ static void redirection_dup(t_shell *shell, t_commands *cmd)
 	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
 }
 
-static void	execute_child(t_commands *cmd, int fd[2], int *pipe_fd) // look up dup2
+static void	execute_child(t_commands *cmd, int fd[2], int *pipe_fd)
 {
-	close(fd[0]);
-	close(0);
-	dup(*pipe_fd);
-	close(*pipe_fd);
-	if (cmd->next)
-	{
-		close(1);
-		dup(fd[1]);
-		close(fd[1]);
-	}
+    if (*pipe_fd != 0)
+    {
+        dup2(*pipe_fd, 0);
+        close(*pipe_fd);
+    }
+
+    if (cmd->next)
+    {
+        dup2(fd[1], 1);
+    }
+
+    close(fd[0]);
+    close(fd[1]);
 }
 
 
@@ -310,7 +315,8 @@ int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
 	}
 //	wait(&pid);
 	//check_child();
-	close(pipe_fd);
+	if (pipe_fd != 0)
+		close(pipe_fd);
 	close(fd[1]);
 	return(fd[0]);
 }
@@ -382,8 +388,8 @@ void	handle_redirects(t_commands *cmd)
 		cmd->redirects.in_fd = open(file, O_EXCL | O_RDONLY);
 		if (cmd->redirects.in_fd == -1)
 		{
-			perror("open failed for input redirection");
-			return;  // Handle error properly
+		//	perror("open failed for input redirection");
+		//	return;  // Handle error properly
 		}
 	}
 	else
@@ -398,8 +404,8 @@ void	handle_redirects(t_commands *cmd)
 		cmd->redirects.out_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (cmd->redirects.out_fd == -1)
 		{
-			perror("open failed for output redirection");
-			return;
+		//	perror("open failed for output redirection");
+		//	return;
 		}
 	}
 	else
@@ -414,8 +420,8 @@ void	handle_redirects(t_commands *cmd)
 		cmd->redirects.err_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (cmd->redirects.err_fd == -1)
 		{
-			perror("open failed for append redirection");
-			return;
+		//	perror("open failed for append redirection");
+			return ;
 		}
 	}
 	else
