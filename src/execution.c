@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/02 17:29:53 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/03/02 19:25:38 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,6 +277,7 @@ static int redirection_dup(t_shell *shell, t_commands *cmd)
 
 int	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
 {
+	//printf("pipe_fd: %d\n", pipe_fd);
 	if (cmd->redirection)
 		return(redirection_dup(shell, cmd));
 	else
@@ -336,21 +337,6 @@ int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd,	int *child_exitcode)
 		close(pipe_fd); // close previous read end
 	close(fd[1]);	// close write end of new pipe
 	return(fd[0]); // return read end of the new pipe
-}
-
-
-
-void execute_pipe(t_shell *shell, t_commands *cmd)
-{
-    int pipe_fd = -1;
-	int	child_exitcode;
-
-    while (cmd)
-    {
-        pipe_fd = run_pipe(shell, cmd, pipe_fd, &child_exitcode);
-	//	printf("Meow2!\n");
-        cmd = cmd->next;
-    }
 }
 
 char	*ft_strlcpy2(char *str, int	c)
@@ -446,6 +432,25 @@ void	handle_redirects(t_commands *cmd)
 
 	}
 }
+
+void execute_pipe(t_shell *shell, t_commands *cmd)
+{
+    int pipe_fd = -1;
+	int	child_exitcode;
+
+    while (cmd)
+    {
+        pipe_fd = run_pipe(shell, cmd, pipe_fd, &child_exitcode);
+	//	printf("Meow2!\n");
+        cmd = cmd->next;
+		if (cmd)
+			handle_redirects(cmd);
+    }
+}
+
+
+
+
 
 int	execute(t_shell *shell)
 {
