@@ -1,13 +1,16 @@
 "1"
+a.out
 incl
 libft
 Makefile
 meowmeow
 minishell
 minishell_tester
-missing
 obj
 src
 tags
+tester.txt
 test.txt
 workflow
+exitcode in execute_cmd 0
+exitcode: 0
