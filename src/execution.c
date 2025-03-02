@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/02 16:28:16 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/03/02 17:16:27 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,30 +44,26 @@ char *ft_strjoin3(const char *s1, const char *s2, const char *s3)
 }
 
 
-int	execute_builtin(t_shell *shell, t_commands *cmd, int pipe_fd)
+int	execute_builtin(t_shell *shell, t_commands *cmd)
 {
-	(void)pipe_fd;
 	if (!ft_strcmp2(cmd->builtin, "pwd"))
-		shell->exitcode = ft_pwd();
+		return ft_pwd();
 	else if (!ft_strcmp2(cmd->builtin, "echo"))
-		shell->exitcode = ft_echo(cmd->str);
+		return ft_echo(cmd->str);
 	else if (!ft_strcmp2(cmd->builtin, "cd"))
-		shell->exitcode = ft_cd(cmd->str);
+		return ft_cd(cmd->str);
 	else if (!ft_strcmp2(cmd->builtin, "export"))
-		shell->exitcode = ft_export(cmd->str);
+		return ft_export(cmd->str);
 	else if (!ft_strcmp2(cmd->builtin, "unset"))
-		shell->exitcode = ft_unsetenv(cmd->str);
+		return ft_unsetenv(cmd->str);
 	else if (!ft_strcmp2(cmd->builtin, "env"))
-		shell->exitcode = ft_env();
+		return ft_env();
 	else if (!ft_strcmp2(cmd->builtin, "exit"))
 		ft_exit(cmd->str, shell->exitcode);
-	else
-	{
-	//	dprintf(2, "builtin not executed\n");
-		return (0);
-	}
-	return (1);
+	return (-1);
 }
+
+
 
 int	is_dir(const char *file_path)
 {
@@ -140,8 +136,8 @@ int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf
 			return (execute_string(shell, cmd, bin, pipe_fd));
 		else
 		{
-			//dprintf(2, "minishell: execve: Permission denied\n");
-			shell->exitcode = 1;
+			dprintf(2, "minishell: execve: Permission denied\n"); // Fix this part, weird errors when using cat + pipe
+			return (1);
 		}
 		free(bin);
 		return (1);
@@ -149,7 +145,7 @@ int		check_perms(t_shell *shell, t_commands *cmd, char *bin, struct stat statbuf
 	else
 	{
 		dprintf(2, "minishell: %s : Is a directory\n", cmd->str[1]);
-		shell->exitcode = 1;
+		return (1);
 	}
 	free(bin);
 	return (1);
@@ -194,46 +190,48 @@ static int	execute_files(t_shell *shell, t_commands *cmd, int pipe_fd)
 		flag = f.st_mode & S_IFMT;
 		if (flag == S_IFDIR && (cmd->str[0][ft_strlen(cmd->str[0]) - 1] == '/' || ft_strncmp(cmd->str[0], "./", 2) == 0))
 		{
-			shell->exitcode = 126;
-			return (dprintf(2, " Is a directory\n"));
+			dprintf(2, " Is a directory\n");
+			return (126);
 		}
 		else if ((f.st_mode & S_IXUSR) && (f.st_mode & S_IRUSR) && (cmd->str[0][0] == '/' || ft_strncmp(cmd->str[0], "./", 2) == 0))
 			return(execute_string(shell, cmd, ft_strdup(cmd->str[0]), pipe_fd));
 		else if (flag != S_IXUSR && flag != S_IRUSR && flag != S_IFDIR && flag != S_IFLNK)
 		{
-			shell->exitcode = 126;
-			return(dprintf(2, " Permission denied\n"));
+			dprintf(2, " Permission denied\n");
+			return(126);
 		}
 	}
 	else if (ft_strncmp(cmd->str[0], "./", 2) == 0 || cmd->str[0][0] == '/')
 	{
-		shell->exitcode = 127;
-		return (dprintf(2, " No such file or directory\n"));
+		dprintf(2, " No such file or directory\n");
+		return (127);
 	}
-	shell->exitcode = 127;
-	return (dprintf(2, " command not found\n"));
+	dprintf(2, " command not found\n");
+	return (127);
 }
 
 
 int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd) // make this exit with cmd exitcode
 {
 	char *path;
+	int	exitcode;
 
-	(void)pipe_fd;
 	path = ft_getenv("PATH");
 	if (!cmd->str)
 		cmd->str = (char **)ft_strdup("");
 	if (ft_strcmp2(cmd->str[0], "whoami") && !path)
 	{
-		shell->exitcode = 127;
-		return(printf("No such file or directory\n"));
+		printf("No such file or directory\n");
+		return(127);
 	}
 	free(path);
-	if (execute_builtin(shell, cmd, pipe_fd) || execute_binaries(shell, cmd, pipe_fd))
-		return (1);
-	else
-	 	execute_files(shell, cmd, pipe_fd); // check() exec.c
-	return (0);
+	exitcode = execute_builtin(shell, cmd);
+	if (exitcode == -1)
+		exitcode = execute_binaries(shell, cmd, pipe_fd);
+	if (exitcode == -1)
+	 	exitcode = execute_files(shell, cmd, pipe_fd);
+	//printf("exitcode %d\n", exitcode);
+	return (exitcode);
 }
 
 static void	clean_redir(t_commands *cmd, int sin, int sout, int serr)
@@ -246,7 +244,7 @@ static void	clean_redir(t_commands *cmd, int sin, int sout, int serr)
 		dup2(serr, 2);
 }
 
-static void redirection_dup(t_shell *shell, t_commands *cmd)
+static int redirection_dup(t_shell *shell, t_commands *cmd)
 {
 	int	s_stdin;
 	int	s_stdout;
@@ -271,13 +269,25 @@ static void redirection_dup(t_shell *shell, t_commands *cmd)
 		close(2);
 		dup2(cmd->redirects.err_fd, 2);
 	}
-	shell->exitcode = execute_cmd(shell, cmd, 0);
+	int exitcode = execute_cmd(shell, cmd, 0);
+//	printf("exitcode: %d\n", exitcode);
 	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
+	return (exitcode);
+}
+
+int	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
+{
+	if (cmd->redirection)
+		return(redirection_dup(shell, cmd));
+	else
+		return(execute_cmd(shell, cmd, pipe_fd));
 }
 
 static void	execute_child(t_shell *shell, t_commands *cmd, int fd[2], int *pipe_fd)
 {
-    if (*pipe_fd != 0)
+//	printf("starting child execution\n");
+//	printf("pipe_fd: %d, fd[0]: %d, fd[1]: %d\n", *pipe_fd, fd[0], fd[1]);
+    if (*pipe_fd != 0) // potentially change back to 0
     {
         dup2(*pipe_fd, 0); // copy stdin to read end of prev pipe
         close(*pipe_fd); // close old read end
@@ -290,12 +300,16 @@ static void	execute_child(t_shell *shell, t_commands *cmd, int fd[2], int *pipe_
 
     close(fd[0]);	// close the pipe
     close(fd[1]);
-	//printf("Executed child!\n");
-	exit(execute_cmd(shell, cmd, *pipe_fd));
+//	printf("Executed child!\n");
+//	printf("pipe_fd: %d, fd[0]: %d, fd[1]: %d\n", *pipe_fd, fd[0], fd[1]);
+//fflush(stdout);
+
+//	fflush(stdout);
+	exit(redirect_and_execute(shell, cmd, *pipe_fd));
 }
 
 
-int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
+int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd,	int *child_exitcode)
 {
 	int fd[2];
 	int	pid;
@@ -315,7 +329,8 @@ int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
 		execute_child(shell, cmd, fd, &pipe_fd);
 	}
 	//printf("Waiting for child\n");
-	waitpid(pid, NULL, 0);
+	waitpid(pid, child_exitcode, 0);
+	shell->exitcode = WEXITSTATUS(*child_exitcode);
 //	printf("Finished waiting for child\n");
 	if (pipe_fd != 0)
 		close(pipe_fd); // close previous read end
@@ -323,25 +338,19 @@ int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
 	return(fd[0]); // return read end of the new pipe
 }
 
-void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
-{
-	if (cmd->redirection)
-		redirection_dup(shell, cmd);
-	else
-		execute_cmd(shell, cmd, pipe_fd);
-}
+
 
 void execute_pipe(t_shell *shell, t_commands *cmd)
 {
     int pipe_fd = -1;
+	int	child_exitcode;
 
     while (cmd)
     {
-        pipe_fd = run_pipe(shell, cmd, pipe_fd);
+        pipe_fd = run_pipe(shell, cmd, pipe_fd, &child_exitcode);
 	//	printf("Meow2!\n");
         cmd = cmd->next;
     }
-    // Wait for all child processes (not shown here, but should be handled)
 }
 
 char	*ft_strlcpy2(char *str, int	c)
@@ -452,7 +461,7 @@ int	execute(t_shell *shell)
 		if (cmd->next)
 			execute_pipe(shell, cmd);
 		else // implement security chck
-			redirect_and_execute(shell, cmd, 0);
+			shell->exitcode = redirect_and_execute(shell, cmd, 0);
 		// free cmd
 
 	//	cmd = cmd->next;
