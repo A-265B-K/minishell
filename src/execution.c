@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/01 16:27:26 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/03/02 16:28:16 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,21 +275,23 @@ static void redirection_dup(t_shell *shell, t_commands *cmd)
 	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
 }
 
-static void	execute_child(t_commands *cmd, int fd[2], int *pipe_fd)
+static void	execute_child(t_shell *shell, t_commands *cmd, int fd[2], int *pipe_fd)
 {
     if (*pipe_fd != 0)
     {
-        dup2(*pipe_fd, 0);
-        close(*pipe_fd);
+        dup2(*pipe_fd, 0); // copy stdin to read end of prev pipe
+        close(*pipe_fd); // close old read end
     }
 
     if (cmd->next)
     {
-        dup2(fd[1], 1);
+        dup2(fd[1], 1); // redirect stdout to write end of new pipe
     }
 
-    close(fd[0]);
+    close(fd[0]);	// close the pipe
     close(fd[1]);
+	//printf("Executed child!\n");
+	exit(execute_cmd(shell, cmd, *pipe_fd));
 }
 
 
@@ -298,41 +300,28 @@ int	run_pipe(t_shell *shell, t_commands *cmd, int	pipe_fd)
 	int fd[2];
 	int	pid;
 
-	if (pipe(fd))
+	if (cmd->next && pipe(fd)) // open pipe
 		return (-1);
 	pid = fork();
-	if (pid < 0)
+	if (pid < 0)	// if pipe fails close all fds
 	{
 		close(fd[0]);
 		close(fd[1]);
 		close(pipe_fd);
 		return (-1);
 	}
-	else if (!pid)
+	else if (!pid)	// if child execute child process and execute command
 	{
-		execute_child(cmd, fd, &pipe_fd);
-		exit(execute_cmd(shell, cmd, pipe_fd));
+		execute_child(shell, cmd, fd, &pipe_fd);
 	}
-//	wait(&pid);
-	//check_child();
+	//printf("Waiting for child\n");
+	waitpid(pid, NULL, 0);
+//	printf("Finished waiting for child\n");
 	if (pipe_fd != 0)
-		close(pipe_fd);
-	close(fd[1]);
-	return(fd[0]);
+		close(pipe_fd); // close previous read end
+	close(fd[1]);	// close write end of new pipe
+	return(fd[0]); // return read end of the new pipe
 }
-
-static void execute_pipe(t_shell *shell, t_commands *cmd, int *pipe_fd)
-{
-    int new_pipe_fd;
-
-    new_pipe_fd = run_pipe(shell, cmd, *pipe_fd);
-
-    if (*pipe_fd != 0)
-        close(*pipe_fd);
-
-    *pipe_fd = new_pipe_fd;
-}
-
 
 void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
 {
@@ -340,6 +329,19 @@ void	redirect_and_execute(t_shell *shell, t_commands *cmd, int	pipe_fd)
 		redirection_dup(shell, cmd);
 	else
 		execute_cmd(shell, cmd, pipe_fd);
+}
+
+void execute_pipe(t_shell *shell, t_commands *cmd)
+{
+    int pipe_fd = -1;
+
+    while (cmd)
+    {
+        pipe_fd = run_pipe(shell, cmd, pipe_fd);
+	//	printf("Meow2!\n");
+        cmd = cmd->next;
+    }
+    // Wait for all child processes (not shown here, but should be handled)
 }
 
 char	*ft_strlcpy2(char *str, int	c)
@@ -373,7 +375,9 @@ void	handle_redirects(t_commands *cmd)
 
 		if (type == 3)
 			file = ft_strlcpy2(cmd->redirection, 2);
-		else
+		else	// else
+//	wait(&pid);
+	//check_child();
 			file = ft_strlcpy2(cmd->redirection, 1);
 		if (!file)
 		{
@@ -436,23 +440,24 @@ void	handle_redirects(t_commands *cmd)
 
 int	execute(t_shell *shell)
 {
-	int	pipe_fd;
+	//int	pipe_fd;
 	// int	i;
 	t_commands	*cmd = shell->com_struct;
 
 
 	// i = 0;
-	while (cmd)
+	if (cmd)
 	{
 		handle_redirects(cmd);
 		if (cmd->next)
-			execute_pipe(shell, cmd, &pipe_fd);
+			execute_pipe(shell, cmd);
 		else // implement security chck
 			redirect_and_execute(shell, cmd, 0);
 		// free cmd
 
-		cmd = cmd->next;
+	//	cmd = cmd->next;
 	}
+//	printf("Made out of the pipedream\n");
 	// close fd
 	return (0);
 }
