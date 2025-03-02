@@ -6,7 +6,7 @@
 /*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/09 16:30:42 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/02 17:16:27 by alkuijte      ########   odam.nl         */
+/*   Updated: 2025/03/02 17:29:53 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int	execute_string(t_shell *shell, t_commands *cmd, char *str, int pipe_fd)
 	waitpid(pid, NULL, 0);
 	//status_child();
 	pid = 0;
-	return (1);
+	return (0);
 }
 
 int	redirection_permission(t_commands *cmd)
@@ -230,7 +230,7 @@ int	execute_cmd(t_shell *shell, t_commands *cmd, int pipe_fd) // make this exit 
 		exitcode = execute_binaries(shell, cmd, pipe_fd);
 	if (exitcode == -1)
 	 	exitcode = execute_files(shell, cmd, pipe_fd);
-	//printf("exitcode %d\n", exitcode);
+	//printf("exitcode in execute_cmd %d\n", exitcode);
 	return (exitcode);
 }
 
@@ -270,7 +270,7 @@ static int redirection_dup(t_shell *shell, t_commands *cmd)
 		dup2(cmd->redirects.err_fd, 2);
 	}
 	int exitcode = execute_cmd(shell, cmd, 0);
-//	printf("exitcode: %d\n", exitcode);
+	//printf("exitcode: %d\n", exitcode);
 	clean_redir(cmd, s_stdin, s_stdout, s_stderr);
 	return (exitcode);
 }
@@ -462,7 +462,7 @@ int	execute(t_shell *shell)
 			execute_pipe(shell, cmd);
 		else // implement security chck
 			shell->exitcode = redirect_and_execute(shell, cmd, 0);
-		// free cmd
+	//	printf("Exitcode: %d\n", shell->exitcode);
 
 	//	cmd = cmd->next;
 	}
