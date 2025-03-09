@@ -5,7 +5,7 @@ RESET   	= \033[0m
 
 NAME	= minishell
 CC		= cc
-CFLAGS	= -Werror -Wextra -Wall -march=native -g
+CFLAGS	= -Werror -Wextra -Wall -march=native -g # -fsanitize=address
 INC		= -I ./incl/
 SRC_PATH	= src/
 SRC 		= $(wildcard $(SRC_PATH)*/*.c) $(wildcard $(SRC_PATH)/*.c)
@@ -22,7 +22,7 @@ all: $(NAME)
 	@if [ "$(COMPILED)" -eq 0 ]; then \
 		echo "$(RED_B) $(WHITE)Nothing to be done for 'all'$(RESET)"; \
 	fi
-                                                                                                                                                                                           
+                                                                                                                                                         
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c | $(OBJ_PATH)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INC)
