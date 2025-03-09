@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 // syntax check not done, need to add:
-// -- redirection operator errors --> >    > for example [DONE]
+// -- redirection operator errors --> >	> for example [DONE]
 // -- Quotes! what to do with them? error message or no? well now we know
 // •Handle ’ (single quote) which should prevent the shell from interpreting the meta-
 // characters in the quoted sequence.
@@ -42,25 +42,25 @@ int	operator_check(char *str)
 
 int unclosed_quotes(const char *input)
 {
-    char open_quote;
-    int i;
+	char open_quote;
+	int i;
 
-    i = 0;
-    open_quote = '\0';
-    while (input[i])
-    {
-        if (input[i] == '\'' || input[i] == '"')
-        {
-            if (open_quote == '\0')
-                open_quote = input[i];
-            else if (open_quote == input[i])
-                open_quote = '\0';
-        }
-        i++;
-    }
-    if (open_quote != '\0')
-        return (0);
-    return (1);
+	i = 0;
+	open_quote = '\0';
+	while (input[i])
+	{
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			if (open_quote == '\0')
+				open_quote = input[i];
+			else if (open_quote == input[i])
+				open_quote = '\0';
+		}
+		i++;
+	}
+	if (open_quote != '\0')
+		return (0);
+	return (1);
 }
 
 int	operator_placement(t_shell *shell)

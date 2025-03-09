@@ -1,9 +1,11 @@
 "1"
 a.out
+cat.txt
 incl
 libft
 Makefile
 meowmeow
+meow.txt
 minishell
 minishell_tester
 obj
@@ -12,5 +14,19 @@ tags
 tester.txt
 test.txt
 workflow
-exitcode in execute_cmd 0
-exitcode: 0
+"1"
+a.out
+cat.txt
+incl
+libft
+Makefile
+meowmeow
+meow.txt
+minishell
+minishell_tester
+obj
+src
+tags
+tester.txt
+test.txt
+workflow
