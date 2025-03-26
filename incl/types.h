@@ -26,8 +26,15 @@ typedef enum e_operators
 	O_G_BUILTIN,
 	O_G_REDIRECT,
 	O_G_WORD,
-	
 }	t_operators;
+
+typedef struct s_heredoc
+{
+    char                *delimiter;
+    int                 quoted;
+    char                *tempfile;
+    struct s_heredoc    *next;
+}   t_heredoc;
 
 typedef struct s_lexer_tools
 {
@@ -64,14 +71,22 @@ typedef struct s_commands
 	char	**str;
 	char	*builtin;
 	t_token	*tokenized;
-	char	*redirection;
+	char	**redirection;
+    int     red_count;
 	t_redirects redirects;
+    char    *hd_name;
 	int		id;
 	struct	s_commands	*next;
 	struct	s_commands	*prev;
 }	t_commands;
 
-
+typedef struct s_q
+{
+    int in_s;
+    int in_d;
+    int i;
+    int j;
+}   t_q;
 
 typedef struct s_error
 {
@@ -87,39 +102,14 @@ typedef struct s_shell
 	char			**envp;
 	int				exitcode;
 	bool			exit;
+    char            *cur_pwd;
+    char            *old_pwd;
+    int             heredoc_id;
+    int             quoted;
 	t_error			*error;
 	t_token			*tokenized;
-	t_token			*lexer_grouped;
+	t_token			*lex;
 	t_commands		*com_struct;
 }	t_shell;
-
-
-
-// typedef struct s_task
-// {
-// 	int				index;
-// 	t_list			*tokens;
-// 	t_list			*pipes;
-// 	t_token_type	type;
-// }	t_task;
-
-// typedef struct s_pipe
-// {
-// 	int				index;
-// 	int				invalid;
-// 	pid_t			pid;
-// 	t_list			*tokens;
-// 	int				wstatus;
-// 	char			**envp;
-// 	char			**argv;
-// 	int				argc;
-// 	bool			is_exit;
-// }	t_pipe;
-
-// typedef struct s_env
-// {
-// 	char			*key;
-// 	char			*value;
-// }	t_env;
 
 #endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   minishell.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/02/28 17:59:27 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
+/*   Updated: 2025/03/25 23:22:38 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@ void	set_prompt(t_shell *shell)
 {
 	char	*prompt_line;
 
+    // printf("cwd = %s\noldcwd = %s\n", shell->)
 	if (shell->prompt)
 		free(shell->prompt);
 	prompt_line = env_get("USER", shell->envp);
 	prompt_line = free_join(prompt_line, "@", true, false);
-	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), true, true);
+	prompt_line = free_join(prompt_line, env_get("PWD", shell->envp), 1, 1);
 	prompt_line = free_join(prompt_line, ": ", true, false);
 	shell->prompt = ft_strdup(prompt_line);
 	free (prompt_line);
@@ -28,11 +29,41 @@ void	set_prompt(t_shell *shell)
 
 t_shell	*shell_init(char **envp)
 {
-	t_shell *shell;
+	t_shell	*shell;
+
 	shell = mem_add(1, sizeof(t_shell));
 	shell->envp = alloc_double(envp);
-	set_prompt(shell);
+    shell->cur_pwd = env_get("PWD", shell->envp);
+    shell->old_pwd = env_get("OLDPWD", shell->envp);
+    shell->heredoc_id = 0;
 	return (shell);
+}
+void	reset_shell(t_shell *shell)
+{
+	if (shell)
+	{
+		if (shell->input)
+        {
+			free(shell->input);
+            shell->input = NULL;
+        }
+		if (shell->lex)
+        {
+			free_tokens(&shell->lex);
+            shell->lex = NULL;
+        }
+		if (shell->tokenized)
+        {
+			free_tokens(&shell->tokenized);
+            shell->tokenized = NULL;
+        }
+		if (shell->com_struct)
+		{
+			free_command_list(shell->com_struct);
+			shell->com_struct = NULL;
+		}
+        shell->heredoc_id = 0;
+	}
 }
 
 void	close_shell(t_shell *shell)
@@ -46,36 +77,52 @@ void	close_shell(t_shell *shell)
 		if (shell->prompt)
 			free(shell->prompt);
 		if (shell->com_struct)
-				free_command_node(shell->com_struct);
-		if (shell->lexer_grouped)
-				free_tokens(shell->lexer_grouped);
+		{
+			free_command_list(shell->com_struct);
+			shell->com_struct = NULL;
+		}
+		if (shell->lex)
+			free_tokens(&shell->lex);
+		if (shell->tokenized)
+			free_tokens(&shell->tokenized);
+		if (shell->cur_pwd)
+            free (shell->cur_pwd);
+        if (shell->old_pwd)
+            free(shell->old_pwd);    
 		free (shell);
 	}
 }
 
+
+
 int	main(int argc, char **argv, char **envp)
 {
-	t_shell *shell;
-	((void)argc, (void)argv);
-	shell = shell_init(envp);
-	while ((shell->input = readline(shell->prompt)) != NULL)
+	t_shell	*shell;
+
+	if (argc > 1 || argv[1])
 	{
-		if (!ft_strncmp(shell->input, "shellleak", 9))
+		printf("This program does not take arguments\n");
+		exit (0);
+	}
+    shell = shell_init(envp);
+	while (1)
+	{
+		set_prompt(shell);
+		shell->input = readline(shell->prompt);
+		if (shell->input == NULL)
 			break ;
-		if (!lexer(shell))
-			break ;
-	//	printf("here\n");
-		if (!ft_strncmp(shell->input, "lexerleak", 9))
-			break ;
-		if (ft_strlen(shell->input) > 0)
-			add_history(shell->input);
-		parser(shell);
-		if (!ft_strncmp(shell->input, "parserleak", 10))
-			break ;
-	//m	printf("Exitcode: %d\n", shell->exitcode);
-		execute(shell);
+        if (shell->input[0])
+        {
+		    if (!lexer(shell))
+			    break ;
+		    if (parser(shell))
+                break ;
+		    if (ft_strlen(shell->input) > 0)
+			    add_history(shell->input);
+		    execute(shell);
+        }
+		reset_shell(shell);
 	}
 	close_shell(shell);
-	return (0);
+	exit(0);
 }
-

@@ -25,17 +25,19 @@ void	free_array(char **array, int len)
 	free(array);
 }
 
-static int	find_env_index(const char *name)
+static int	find_env_index(const char *name, t_shell *shell)
 {
 	int		i;
 	size_t	len;
-	const char *const *const env = borrow_env();
 
 	len = ft_strlen(name);
-	i = -1;
-	while (env[++i])
-		if (!strncmp(env[i], name, len))
+	i = 0;
+	while (shell->envp[i])
+	{
+		if (!strncmp(shell->envp[i], name, len))
 			return (i);
+		i++;
+	}
 	return (-1);
 }
 
@@ -103,93 +105,43 @@ int	valid_identifier_check(const char *name)
 	return (1);
 }
 
-int ft_setenv(const char *name, const char *value)
-{
-	char ***env_ptr = env_holder();
-	char **env = *env_ptr;
-	char **temp_env;
-	char *new_var;
-	int i;
-	int array_len = arraylen(env);
-
-	if (!name || !valid_identifier_check(name))
-	{
-		dprintf(2, " not a valid identifier\n");
-		return (1);
-	}
-	if (!value)
-		value = "''";
-	i = -1;
-	while (++i < array_len)
-	{
-		if (strncmp(env[i], name, strlen(name)) == 0)
-		{
-			new_var = malloc(strlen(name) + strlen(value) + 2);
-			if (!new_var)
-				return (1);
-			snprintf(new_var, strlen(name) + strlen(value) + 2, "%s=%s", name, value);
-			free(env[i]);
-			env[i] = new_var;
-			return (0);
-		}
-	}
-	temp_env = malloc((array_len + 2) * sizeof(char *));
-	if (!temp_env)
-		return (1);
-	i = -1;
-	while (++i < array_len)
-		temp_env[i] = env[i];
-	new_var = malloc(strlen(name) + strlen(value) + 2);
-	if (!new_var)
-	{
-		free(temp_env);
-		return (1);
-	}
-	snprintf(new_var, strlen(name) + strlen(value) + 2, "%s=%s", name, value);
-	temp_env[array_len] = new_var;
-	temp_env[array_len + 1] = NULL;
-	*env_ptr = temp_env;
-	free(env);
-	return (0);
-}
-
-int	ft_unsetenv(char **params)
+int	ft_unsetenv(char **params, t_shell *shell)
 {
 	int	i;
-	char ***const	env = env_holder();
+	char	*name;
 
 	if (!params)
 		return (0);
-	const char *name = params[0];
-	if (ft_strcmp2(name, ""))
+	name = ft_strdup(params[0]);
+	if (!ft_strncmp(name, "", 1))
 		return (0);
-	if (ft_strcmp2(name, "HOME") || ft_strcmp2(name, "PATH") || ft_strcmp2(name, "SHELL"))
+	if (!ft_strncmp(name, "HOME", 4) || !ft_strncmp(name, "PATH", 4) || !ft_strncmp(name, "SHELL", 5))
 		return (0);
-	i = find_env_index(name);
+	i = find_env_index(name, shell);
 	if (i == -1)
 		return (0);
-	free(*env[i]);
-	while (*env[i])
+	free(shell->envp[i]);
+	while (shell->envp[i])
 	{
-		env[i] = env[i + 1];
+		shell->envp[i] = shell->envp[i + 1];
 		i += 1;
 	}
-	free(*env[i]);
+	free(shell->envp[i]);
+	free(name);
 	return (0);
 }
 
-char	*ft_getenv(const char *name)
+char	*ft_getenv(const char *name, t_shell *shell)
 {
 	int	i;
-	const char *const *const	env = borrow_env();
 	const char	*env_var;
 	size_t		name_len;
 
 	name_len = ft_strlen(name);
 	i = -1;
-	while (env[++i])
+	while (shell->envp[++i])
 	{
-		env_var = env[i];
+		env_var = shell->envp[i];
 		if (!ft_strncmp(env_var, name, name_len))
 				return (ft_strdup(&env_var[name_len + 1]));
 	}
