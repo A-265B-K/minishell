@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   tools.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ahornstr <ahornstr@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/11/20 16:40:38 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/02/24 12:55:42 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   tools.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 16:40:38 by ahornstr          #+#    #+#             */
+/*   Updated: 2025/03/23 19:10:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ char	**alloc_double(char **envp)
 		new[i] = ft_strdup(envp[i]);
 		i++;
 	}
+    new[i] = NULL;
 	return (new);
 }
 
@@ -75,4 +76,3 @@ char	*free_join(char *s1, char *s2, bool free_s1, bool free_s2)
 		free(s1);
 	return (tmp);
 }
-
