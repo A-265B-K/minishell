@@ -24,14 +24,14 @@ int	is_flag(char *str)
 
     i = 1;
     if (str[0] != '-')
-        return false;
+        return (0);
     while (str[i])
     {
         if (str[i] != 'n')
-            return false;
+            return (0);
         i++;
     }
-    return true;
+    return (1);
 }
 
 int ft_echo(char **params)
@@ -42,10 +42,7 @@ int ft_echo(char **params)
     flag = 1;
     i = 0;
 	if (!params || !params[i])
-	{
-		printf("\n");
 		return (0);
-	}
     while (params[i] && is_flag(params[i]))
     {
         flag = 0;
@@ -268,28 +265,6 @@ int	ft_export(char **cmd, char ***envp)
 	return (exitcode);
 }
 
-// int	ft_export(char **params)
-// {
-// 	int		i;
-// 	int		exitcode;
-// 	char	**export_var; // add memory safety
-
-// 	i = -1;
-// 	exitcode = 0;
-// 	if (!params[0])
-// 		ft_env();
-// 	else
-// 	{
-// 		while (params[++i])
-// 		{
-// 			export_var = ft_split(params[i], '=');
-// 			exitcode = ft_setenv(export_var[0], export_var[1]);
-// 			free(export_var);
-// 		}
-// 	}
-// 	return (exitcode);
-// }
-
 int	ft_isstrnum(char *str) // move to libft
 {
 	int	flag;
@@ -311,54 +286,6 @@ int	ft_isstrnum(char *str) // move to libft
 	return (flag);
 }
 
-// int	ft_cd(char	**params)
-// {
-// 	char	curpath[PATH_MAX];
-// 	char	dir_operand[PATH_MAX];
-// 	char	temp[PATH_MAX];
-// 	char	*home;
-
-// 	home = NULL;	
-// 	ft_bzero(curpath, PATH_MAX);
-// 	ft_bzero(dir_operand, PATH_MAX);
-// 	ft_bzero(temp, PATH_MAX);
-// 	if ((!params || !params[0]) && !home)
-// 		return (1);
-// 	if (params[1])
-// 	{
-// 		dprintf(2, " too many arguments");
-// 		return (1);
-// 	}
-// 	if (!params)
-// 		ft_strlcpy(dir_operand, home, PATH_MAX);
-// 	ft_strlcpy(dir_operand, params[0], PATH_MAX);
-// 	if (dir_operand[0] == '/')
-// 		ft_strlcpy(curpath, dir_operand, PATH_MAX);
-// 	else
-// 	{
-// 		if (!(ft_strncmp(dir_operand, ".", 1) || ft_strncmp(dir_operand, "..", 2)))
-// 		{
-// 				printf("meow\n");
-// 		}
-// 		// Fix env variables
-// 		ft_strlcpy(curpath, dir_operand, PATH_MAX);
-// 	}
-// 	if (curpath[0] != '/')
-// 	{
-// 		ft_strlcpy(temp, getcwd(NULL, 0), PATH_MAX);
-// 		if (temp[strlen(temp)] != '/')
-// 			temp[strlen(temp) + 1] = '/';
-// 		strcat(temp, curpath);
-// 		ft_strlcpy(curpath, temp, 0);
-// 	}
-// 	if (chdir(curpath) == -1)
-// 	{
-// 		dprintf(2, "cd: No such file or directory\n");
-// 		return (1);
-// 	}
-
-// 	return (0);
-// }
 
 int	ft_strcmp(const char *s1, const char *s2) // move libft
 {

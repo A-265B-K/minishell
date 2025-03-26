@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 18:01:11 by marvin            #+#    #+#             */
-/*   Updated: 2025/03/26 01:37:25 by marvin           ###   ########.fr       */
+/*   Updated: 2025/03/26 01:51:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ int valid_combo(char *str, int i)
     temp = ft_substr(str, i, 2);
     if (!temp)
         return (0);
-    if (ft_strncmp(temp, "<<", 2) || ft_strncmp(temp, ">>", 2) \
-        || ft_strncmp(temp, "||", 2))
+    if (ft_strcmp(temp, "<<") == 0 || ft_strcmp(temp, ">>") == 0 \
+        || ft_strcmp(temp, "||") == 0)
     {
         free (temp);
         return (1);
@@ -98,7 +98,7 @@ int	combo_check(char *str)
 		{
 			if (is_f_operator(str[i + 1]))
 			{
-				if (valid_combo(str, i))
+				if (!valid_combo(str, i))
 					return (0);
 			}
 		}
