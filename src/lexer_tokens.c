@@ -36,7 +36,7 @@ int	handle_word(char *input, int i, t_token **head, int *id)
 	int	err;
 
 	err = 0;
-	while (input[i] && !isspace(input[i]) && !is_f_operator(input[i]) \
+	while (input[i] && !ft_isspace(input[i]) && !is_f_operator(input[i]) \
 	&& input[i] != '\'' && input[i] != '"')
 	{
 		err = token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));

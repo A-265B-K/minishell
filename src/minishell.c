@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/03/28 02:37:54 by marvin           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   minishell.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: marvin <marvin@student.42.fr>                +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
+/*   Updated: 2025/03/28 13:09:09 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@ t_shell	*shell_init(char **envp)
 	shell->old_pwd = ft_env_get("OLDPWD", shell->envp);
 	if (!shell->old_pwd)
 		return (NULL);
+	shell->exitcode = 0;
+	shell->com_struct = NULL;
+	shell->tokenized = NULL;
+	shell->lex = NULL;
+	shell->input = NULL;
+	shell->prompt = NULL;
+	shell->quoted = 0;
 	shell->heredoc_id = 0;
 	return (shell);
 }

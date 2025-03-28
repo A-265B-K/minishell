@@ -5,7 +5,7 @@ RESET   	= \033[0m
 
 NAME	= minishell
 CC		= cc
-CFLAGS	= -Werror -Wextra -Wall -march=native -g -lreadline -D_GNU_SOURCE #-fsanitize=address
+CFLAGS	= -Werror -Wextra -Wall -march=native -Wunused-function -D_GNU_SOURCE -fsanitize=address
 INC		= -I ./incl/
 SRC_PATH	= src/
 SRC 		= $(wildcard $(SRC_PATH)*/*.c) $(wildcard $(SRC_PATH)/*.c)

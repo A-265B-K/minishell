@@ -23,13 +23,13 @@ int	handle_exitcode(char **result, t_q *q, t_shell *shell, char *s)
 		return (1);
 	len = ft_strlen(exitcode_str);
 	new_size = q->j + len + ft_strlen(s) + 1;
-	*result = realloc(*result, new_size);
+	*result = ft_realloc(*result, q->j, new_size);
 	if (!*result)
 	{
 		free(exitcode_str);
 		return (1);
 	}
-	memcpy(&(*result)[q->j], exitcode_str, len);
+	ft_memcpy(&(*result)[q->j], exitcode_str, len);
 	q->j += len;
 	q->i += 1;
 	free(exitcode_str);
