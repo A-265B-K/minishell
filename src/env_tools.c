@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   env_tools.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: marvin <marvin@student.42.fr>                +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/12/02 13:35:52 by ahornstr      #+#    #+#                 */
-/*   Updated: 2025/03/28 13:29:37 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   env_tools.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/02 13:35:52 by ahornstr          #+#    #+#             */
+/*   Updated: 2025/03/28 17:34:37 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,16 @@ char	*ft_env_get(char *str, char **envp)
 		i++;
 	}
 	return (ft_memcpy(mem_add(1, sizeof(char)), "", 1));
+}
+
+int	all_space(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i] == '\0')
+		return (1);
+	return (0);
 }

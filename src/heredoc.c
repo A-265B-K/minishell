@@ -47,9 +47,7 @@ static char	*read_heredoc_content(const char *lim, int quoted, t_shell *shell)
 		free(line);
 		line = readline("> ");
 		if (!line)
-		{
 			return (free(content), NULL);
-		}
 		if (ft_strncmp(line, lim, ft_strlen(lim)) == 0 \
 		&& line[ft_strlen(lim)] == '\0')
 			return (free(line), content);

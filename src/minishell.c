@@ -6,24 +6,35 @@
 /*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
-/*   Updated: 2025/03/28 14:55:07 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/03/28 17:33:01 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	set_prompt(t_shell *shell)
+int	set_prompt(t_shell *shell)
 {
 	char	*prompt_line;
 
 	if (shell->prompt)
 		free(shell->prompt);
 	prompt_line = ft_env_get("USER", shell->envp);
+	if (!prompt_line)
+		return (1);
 	prompt_line = free_join(prompt_line, "@", true, false);
+	if (!prompt_line)
+		return (1);
 	prompt_line = free_join(prompt_line, ft_env_get("PWD", shell->envp), 1, 1);
+	if (!prompt_line)
+		return (1);
 	prompt_line = free_join(prompt_line, ": ", true, false);
+	if (!prompt_line)
+		return (1);
 	shell->prompt = ft_strdup(prompt_line);
+	if (!shell->prompt)
+		return (free (prompt_line), 1);
 	free (prompt_line);
+	return (0);
 }
 
 t_shell	*shell_init(char **envp)
@@ -84,7 +95,8 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		reset_shell(shell);
-		set_prompt(shell);
+		if (set_prompt(shell))
+			break ;
 		shell->input = readline(shell->prompt);
 		if (shell->input == NULL)
 			break ;
@@ -96,6 +108,5 @@ int	main(int argc, char **argv, char **envp)
 				add_history(shell->input);
 		}
 	}
-	close_shell(shell);
-	exit(0);
+	exit((close_shell(shell), 0));
 }
