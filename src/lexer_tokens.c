@@ -31,79 +31,94 @@ t_operators	id_op(char c, char c_plus)
 	return (-1);
 }
 
-int	handle_word(const char *input, int i, t_token **head, int *id)
+int	handle_word(char *input, int i, t_token **head, int *id)
 {
+	int	err;
+
+	err = 0;
 	while (input[i] && !isspace(input[i]) && !is_f_operator(input[i]) \
 	&& input[i] != '\'' && input[i] != '"')
 	{
-		token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+		err = token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+		if (err)
+			return (-1);
 		i++;
 	}
 	return (i - 1);
 }
 
-int	handle_quotes(const char *input, int start, t_token **head, int *id)
+int	handle_quotes(char *input, int start, t_token **head, int *id)
 {
 	char	quote_type;
 	int		i;
+	int		err;
 
 	i = start + 1;
 	quote_type = input[start];
-	token_back(head, c_token(NULL, input[start], (*id)++, O_WORD));
+	err = 0;
+	err = token_back(head, c_token(NULL, input[start], (*id)++, O_WORD));
+	if (err)
+		return (-1);
 	while (input[i] && input[i] != quote_type)
 	{
-		token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+		err = token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+		if (err)
+			return (-1);
 		i++;
 	}
 	if (input[i] == quote_type)
-		token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+		err = token_back(head, c_token(NULL, input[i], (*id)++, O_WORD));
+	if (err)
+		return (-1);
 	return (i);
 }
 
-int	handle_operator(const char *input, int i, t_token **head, int *id)
+int	handle_operator(char *input, int i, t_token **head, int *id)
 {
 	t_operators	op;
 	char		*temp;
+	int			err;
 
 	op = id_op(input[i], input[i + 1]);
 	if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
 	{
 		temp = ft_substr(input, i, 2);
-		token_back(head, c_token(temp, (char)input[i], (*id)++, op));
+		err = token_back(head, c_token(temp, (char)input[i], (*id)++, op));
 		free (temp);
 	}
 	else
-		token_back(head, c_token(NULL, (char)input[i], (*id)++, op));
+		err = token_back(head, c_token(NULL, (char)input[i], (*id)++, op));
 	if (op == O_OR || op == O_AND || op == O_DLESS || op == O_DGREAT)
 		i++;
+	if (err)
+		return (-1);
 	return (i);
 }
 
-t_token	*tokenize_input(const char *input)
+t_token	*tokenize_input(char *ip, int id, int i)
 {
 	t_token	*head;
-	int		id;
-	int		i;
 
 	head = NULL;
-	id = 0;
-	i = 0;
-	while (input[i])
+	while (ip[i])
 	{
-		if (isspace(input[i]))
+		if (ft_isspace(ip[i]))
 		{
-			token_back(&head, c_token(NULL, (char)input[i], (id)++, O_SPACE));
+			if (token_back(&head, c_token(NULL, (char)ip[i], (id)++, O_SPACE)))
+				return (NULL);
 			i++;
 			continue ;
 		}
-		if (is_f_operator(input[i]))
-			i = handle_operator(input, i, &head, &id);
-		else if (input[i] == '\'' || input[i] == '\"')
-			i = handle_quotes(input, i, &head, &id);
+		if (is_f_operator(ip[i]))
+			i = handle_operator(ip, i, &head, &id);
+		else if (ip[i] == '\'' || ip[i] == '\"')
+			i = handle_quotes(ip, i, &head, &id);
 		else
-			i = handle_word(input, i, &head, &id);
-        if (input[i] != '\0')
-		    i++;
+			i = handle_word(ip, i, &head, &id);
+		if (i < 0)
+			return (NULL);
+		if (ip[i] != '\0')
+			i++;
 	}
 	return (head);
 }
