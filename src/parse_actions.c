@@ -25,7 +25,8 @@ int	parse_redir(t_commands *command, t_token *current, t_shell *shell)
 	else if (current->token == O_LESS || current->token == O_GREAT \
 			|| current->token == O_DGREAT)
 	{
-		command->redirection = realloc(command->redirection, \
+		command->redirection = ft_realloc(command->redirection, \
+			sizeof(char *) * command->red_count, \
 			sizeof(char *) * (command->red_count + 2));
 		if (!command->redirection)
 			return (error_handler("Malloc error @ parse_redir", 1));
@@ -77,7 +78,8 @@ int	parse_builtin(t_token *c_tok, t_commands *c_com, int arg_count)
 	{
 		if (!identify_builtin(c_com, c_tok))
 		{
-			c_com->str = realloc(c_com->str, sizeof(char *) * (arg_count + 2));
+			c_com->str = ft_realloc(c_com->str, \
+				sizeof(char *) * arg_count, sizeof(char *) * (arg_count + 2));
 			if (!c_com->str)
 				return (error_handler("Malloc error @ parse_builtin", -1));
 			c_com->str[arg_count] = ft_strdup(c_tok->str);

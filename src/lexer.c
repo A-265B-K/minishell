@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/02 15:06:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/03/28 02:55:17 by marvin           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   lexer.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/03/28 13:18:57 by alkuijte      #+#    #+#                 */
+/*   Updated: 2025/03/28 13:19:28 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 
 int	init_lexer_tools(t_lexer_tools *tools)
 {
-	tools->buffer = ft_strdup("");
-	if (!tools->buffer)
-		return (1);
+	tools->buffer = NULL;
 	tools->id = 0;
 	tools->mem_size = 0;
 	tools->token_len = 0;
@@ -79,10 +77,17 @@ int	append_to_buffer(t_lexer_tools *tools, char c)
 			tools->mem_size *= 2;
 	}
 	if (tools->buffer)
-		tools->buffer = realloc(tools->buffer, tools->mem_size);
-	if (!tools->buffer)
-		return (1);
+		tools->buffer = ft_realloc(tools->buffer, ft_strlen(tools->buffer), \
+		tools->mem_size);
+	else
+	{
+		tools->buffer = malloc(tools->mem_size);
+		if (!tools->buffer)
+			return (1);
+		tools->buffer[0] = '\0';
+	}
 	tools->buffer[tools->token_len++] = c;
+	tools->buffer[tools->token_len] = '\0';
 	return (0);
 }
 
@@ -91,6 +96,8 @@ int	lexer(t_shell *shell)
 	t_lexer_tools	tools;
 	int				err;
 
+	if (init_lexer_tools(&tools))
+		return (0);
 	err = 0;
 	if (!unclosed_quotes(shell->input))
 		return (error_handler("Unclosed quotes", 2));

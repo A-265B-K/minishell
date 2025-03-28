@@ -65,7 +65,8 @@ static char	*read_heredoc_content(const char *lim, int quoted, t_shell *shell)
 
 int	hd_to_cmd(t_commands *cmd, char *file_name)
 {
-	cmd->redirection = realloc(cmd->redirection, sizeof(char *) * \
+	cmd->redirection = ft_realloc(cmd->redirection, sizeof(char *) * \
+	cmd->red_count, sizeof(char *) * \
 	(cmd->red_count + 2));
 	if (!cmd->redirection)
 	{

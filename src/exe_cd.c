@@ -21,7 +21,7 @@ int	find_var(char ***envp, char *var, size_t name_len, char *new)
 	i = 0;
 	while (env[i] != NULL)
 	{
-		if (strncmp(env[i], var, name_len) == 0 && env[i][name_len] == '=')
+		if (ft_strncmp(env[i], var, name_len) == 0 && env[i][name_len] == '=')
 		{
 			free(env[i]);
 			env[i] = new;
@@ -54,21 +54,21 @@ int	update_env_var(char ***envp, char *var_name, char *value)
 	return (find_var(envp, var_name, name_len, new_entry));
 }
 
-int	check_chdir(char **str)
+int	check_chdir(char **str, t_shell *shell)
 {
 	char	*home_dir;
 	char	*target_dir;
 
 	if (!str || !str[0])
 	{
-		home_dir = getenv("HOME");
+		home_dir = ft_getenv("HOME", shell);
 		if (home_dir == NULL)
 			return (error_handler("cd: HOME not set", 1));
 		target_dir = home_dir;
 	}
 	else if (str[0] && strcmp(str[0], "-") == 0 && !str[1])
 	{
-		target_dir = getenv("OLDPWD");
+		target_dir = ft_getenv("OLDPWD", shell);
 		if (target_dir == NULL)
 			return (error_handler("cd: OLDPWD not set", 1));
 	}
@@ -81,7 +81,7 @@ int	check_chdir(char **str)
 	return (0);
 }
 
-int	ft_cd(char **str, char ***envp)
+int	ft_cd(char **str, char ***envp, t_shell *shell)
 {
 	char	old_pwd[PATH_MAX];
 	char	new_pwd[PATH_MAX];
@@ -89,7 +89,7 @@ int	ft_cd(char **str, char ***envp)
 
 	if (getcwd(old_pwd, sizeof(old_pwd)) == NULL)
 		return (error_handler("cd: getcwd error 1", 1));
-	if (check_chdir(str))
+	if (check_chdir(str, shell))
 		return (1);
 	if (getcwd(new_pwd, sizeof(new_pwd)) == NULL)
 		return (error_handler("cd", 1));

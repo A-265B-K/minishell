@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/28 02:38:40 by marvin            #+#    #+#             */
-/*   Updated: 2025/03/28 03:06:15 by marvin           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   minishell.h                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: marvin <marvin@student.42.fr>                +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/03/28 02:38:40 by marvin        #+#    #+#                 */
+/*   Updated: 2025/03/28 13:34:30 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int			ft_env(t_shell *shell);
 int			execute_builtin(t_shell *shell, t_commands *cmd);
 
 // exe_cd.c
-int			ft_cd(char **str, char ***envp);
-int			check_chdir(char **str);
+int			ft_cd(char **str, char ***envp, t_shell *shell);
+int			check_chdir(char **str, t_shell *shell);
 int			update_env_var(char ***envp, char *var_name, char *value);
 int			find_var(char ***envp, char *var, size_t name_len, char *new);
 

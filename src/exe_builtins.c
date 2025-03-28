@@ -89,7 +89,7 @@ int	execute_builtin(t_shell *shell, t_commands *cmd)
 	else if (!ft_strcmp2(cmd->builtin, "echo"))
 		return (ft_echo(cmd->str));
 	else if (!ft_strcmp2(cmd->builtin, "cd"))
-		return (ft_cd(cmd->str, &shell->envp));
+		return (ft_cd(cmd->str, &shell->envp, shell));
 	else if (!ft_strcmp2(cmd->builtin, "export"))
 		return (ft_export(cmd->str, &shell->envp));
 	else if (!ft_strcmp2(cmd->builtin, "unset"))

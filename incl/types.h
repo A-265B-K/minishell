@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   types.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/28 03:01:29 by marvin            #+#    #+#             */
-/*   Updated: 2025/03/28 03:05:34 by marvin           ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   types.h                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: marvin <marvin@student.42.fr>                +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/03/28 03:01:29 by marvin        #+#    #+#                 */
+/*   Updated: 2025/03/28 13:34:01 by alkuijte      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ typedef struct s_shell
 	char			*prompt;
 	char			*input;
 	char			**envp;
-	int				exitcode;
+	unsigned int	exitcode;
 	char			*cur_pwd;
 	char			*old_pwd;
 	int				heredoc_id;

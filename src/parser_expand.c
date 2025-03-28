@@ -57,13 +57,11 @@ int	variable_expansion(char *ip, char **result, t_q *q, t_shell *shell)
 	exp = expand_env_var(var_name, shell);
 	if (exp)
 	{
-		*result = realloc(*result, q->j + ft_strlen(exp) + 1 + ft_strlen(ip));
+		*result = ft_realloc(*result, \
+			q->j, q->j + ft_strlen(exp) + 1 + ft_strlen(ip));
 		if (!*result)
-		{
-			free(exp);
-			return (0);
-		}
-		memcpy(&(*result)[q->j], exp, ft_strlen(exp));
+			return (free(exp), 0);
+		ft_memcpy(&(*result)[q->j], exp, ft_strlen(exp));
 		q->j += ft_strlen(exp);
 	}
 	if (exp)
