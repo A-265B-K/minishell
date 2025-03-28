@@ -29,7 +29,7 @@ int	is_flag(char *str)
 	int	i;
 
 	i = 1;
-	if (str[0] != '-')
+	if (str[0] != '-' || str[1] != 'n')
 		return (0);
 	while (str[i])
 	{
@@ -84,19 +84,19 @@ int	ft_env(t_shell *shell)
 
 int	execute_builtin(t_shell *shell, t_commands *cmd)
 {
-	if (!ft_strcmp2(cmd->builtin, "pwd"))
+	if (ft_strcmp(cmd->builtin, "pwd") == 0)
 		return (ft_pwd(shell));
-	else if (!ft_strcmp2(cmd->builtin, "echo"))
+	else if (ft_strcmp(cmd->builtin, "echo") == 0)
 		return (ft_echo(cmd->str));
-	else if (!ft_strcmp2(cmd->builtin, "cd"))
+	else if (ft_strcmp(cmd->builtin, "cd") == 0)
 		return (ft_cd(cmd->str, &shell->envp, shell));
-	else if (!ft_strcmp2(cmd->builtin, "export"))
+	else if (ft_strcmp(cmd->builtin, "export") == 0)
 		return (ft_export(cmd->str, &shell->envp));
-	else if (!ft_strcmp2(cmd->builtin, "unset"))
+	else if (ft_strcmp(cmd->builtin, "unset") == 0)
 		return (ft_unsetenv(cmd->str, shell));
-	else if (!ft_strcmp2(cmd->builtin, "env"))
+	else if (ft_strcmp(cmd->builtin, "env") == 0)
 		return (ft_env(shell));
-	else if (!ft_strcmp2(cmd->builtin, "exit"))
+	else if (ft_strcmp(cmd->builtin, "exit") == 0)
 		ft_exit(cmd->str, shell->exitcode);
 	return (-1);
 }

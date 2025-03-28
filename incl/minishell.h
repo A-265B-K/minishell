@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   minishell.h                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: marvin <marvin@student.42.fr>                +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/03/28 02:38:40 by marvin        #+#    #+#                 */
-/*   Updated: 2025/03/28 13:34:30 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/28 02:38:40 by marvin            #+#    #+#             */
+/*   Updated: 2025/03/28 17:34:53 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int			init_lexer_tools(t_lexer_tools *tools);
 int			main(int argc, char **argv, char **envp);
 int			run_shell(t_shell *shell);
 t_shell		*shell_init(char **envp);
-void		set_prompt(t_shell *shell);
+int			set_prompt(t_shell *shell);
 
 // parse_actions.c
 int			parse_redir(t_commands *command, t_token *current, t_shell *shell);
@@ -226,5 +226,7 @@ char		**alloc_double(char **envp);
 int			ft_strarrlen(char **arr);
 void		free_double(char **str);
 char		*free_join(char *s1, char *s2, bool free_s1, bool free_s2);
+
+int			all_space(char *str);
 
 #endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   lexer.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: alkuijte <alkuijte@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/03/28 13:18:57 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/28 13:19:28 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/28 13:18:57 by alkuijte          #+#    #+#             */
+/*   Updated: 2025/03/28 17:34:28 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,10 @@ int	lexer(t_shell *shell)
 	t_lexer_tools	tools;
 	int				err;
 
-	if (init_lexer_tools(&tools))
-		return (0);
+	init_lexer_tools(&tools);
 	err = 0;
+	if (all_space(shell->input))
+		return (2);
 	if (!unclosed_quotes(shell->input))
 		return (error_handler("Unclosed quotes", 2));
 	shell->tokenized = tokenize_input(shell->input, 0, 0);

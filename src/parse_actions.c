@@ -20,7 +20,7 @@ int	parse_redir(t_commands *command, t_token *current, t_shell *shell)
 	{
 		result = handle_heredoc(command, current->next, shell);
 		if (result)
-			return (error_handler("Heredoc error", 1));
+			return (1);
 	}
 	else if (current->token == O_LESS || current->token == O_GREAT \
 			|| current->token == O_DGREAT)
@@ -40,10 +40,10 @@ int	parse_redir(t_commands *command, t_token *current, t_shell *shell)
 
 int	identify_builtin(t_commands *command, t_token *current)
 {
-	if (ft_strncmp(current->str, "echo", 4) == 0 \
-	|| ft_strncmp(current->str, "cd", 2) == 0 \
-	|| ft_strncmp(current->str, "pwd", 3) == 0 \
-	|| ft_strncmp(current->str, "env", 3) == 0)
+	if (ft_strcmp(current->str, "echo") == 0 \
+	|| ft_strcmp(current->str, "cd") == 0 \
+	|| ft_strcmp(current->str, "pwd") == 0 \
+	|| ft_strcmp(current->str, "env") == 0)
 	{
 		if (!command->builtin)
 		{
@@ -51,9 +51,9 @@ int	identify_builtin(t_commands *command, t_token *current)
 			return (1);
 		}
 	}
-	if (ft_strncmp(current->str, "export", 6) == 0 \
-	|| ft_strncmp(current->str, "unset", 5) == 0 \
-	|| ft_strncmp(current->str, "exit", 4) == 0)
+	if (ft_strcmp(current->str, "export") == 0 \
+	|| ft_strcmp(current->str, "unset") == 0 \
+	|| ft_strcmp(current->str, "exit") == 0)
 	{
 		if (!command->builtin)
 		{
