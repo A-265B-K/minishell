@@ -80,7 +80,7 @@ int	set_env_var(char ***envp, char *new_var)
 	{
 		free((*envp)[id]);
 		(*envp)[id] = ft_strdup(new_var);
-		return (1);
+		return (0);
 	}
 	else
 	{
