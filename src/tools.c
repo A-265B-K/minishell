@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:40:38 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/03/23 19:10:22 by marvin           ###   ########.fr       */
+/*   Updated: 2025/03/28 02:31:51 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 void	*mem_add(size_t count, size_t size)
 {
 	char	*ptr;
-	int		n;
+	int		i;
 
-	n = size * count;
-	ptr = malloc(n + 1);
+	i = size * count;
+	ptr = malloc(i + 1);
 	if (!ptr)
-		exit(error(ERR_MALLOC));
-	while (n >= 0)
-		ptr[n--] = '\0';
+		exit(error_handler("Malloc error @ mem_add", 1));
+	while (i >= 0)
+		ptr[i--] = '\0';
 	return ((void *) ptr);
 }
 
@@ -38,7 +38,7 @@ char	**alloc_double(char **envp)
 		new[i] = ft_strdup(envp[i]);
 		i++;
 	}
-    new[i] = NULL;
+	new[i] = NULL;
 	return (new);
 }
 

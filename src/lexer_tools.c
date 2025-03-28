@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:17:43 by ahornstr          #+#    #+#             */
-/*   Updated: 2025/03/24 15:12:24 by marvin           ###   ########.fr       */
+/*   Updated: 2025/03/28 00:51:41 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ t_token	*c_token(char *str, char c, int id, t_operators token)
 	if (!new_token)
 		return (NULL);
 	if (str)
+	{
 		new_token->str = ft_strdup(str);
+		if (!new_token->str)
+			return (NULL);
+	}
 	else
 		new_token->str = NULL;
 	new_token->c = c;
@@ -31,16 +35,16 @@ t_token	*c_token(char *str, char c, int id, t_operators token)
 	return (new_token);
 }
 
-void	token_back(t_token **head, t_token *new_token)
+int	token_back(t_token **head, t_token *new_token)
 {
 	t_token	*temp;
 
 	if (!head || !new_token)
-		return ;
+		return (1);
 	if (!*head)
 	{
 		*head = new_token;
-		return ;
+		return (0);
 	}
 	temp = *head;
 	while (temp->next)
@@ -49,12 +53,13 @@ void	token_back(t_token **head, t_token *new_token)
 	}
 	temp->next = new_token;
 	new_token->prev = temp;
+	return (0);
 }
 
 void	free_tokens(t_token **head)
 {
-	t_token *c;
-	t_token *next;
+	t_token	*c;
+	t_token	*next;
 
 	if (!head || !*head)
 		return ;
@@ -69,7 +74,6 @@ void	free_tokens(t_token **head)
 	}
 	*head = NULL;
 }
-
 
 int	is_f_operator(char c)
 {

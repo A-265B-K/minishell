@@ -1,77 +1,110 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_pipes.c                                    :+:      :+:    :+:   */
+/*   exe_pipes.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/23 14:01:04 by marvin            #+#    #+#             */
-/*   Updated: 2025/03/23 14:01:04 by marvin           ###   ########.fr       */
+/*   Created: 2025/03/27 23:16:31 by marvin            #+#    #+#             */
+/*   Updated: 2025/03/27 23:16:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	execute_child(t_shell *shell, t_commands *cmd, \
-							int fd[2], int *pipe_fd)
+void	close_pipe_ends(int prev_p, int *cur_p, t_commands *cmd)
 {
-	if (*pipe_fd != 0)
+	if (cur_p)
 	{
-		dup2(*pipe_fd, 0);
-		close(*pipe_fd);
+		if (prev_p != -1)
+			close(prev_p);
+		if (cmd && cmd->next)
+		{
+			if (cur_p[1] != -1)
+				close(cur_p[1]);
+		}
+		else if (cmd)
+		{
+			if (cur_p[0] != -1)
+				close(cur_p[0]);
+			if (cur_p[1] != -1)
+				close(cur_p[1]);
+		}
 	}
-	if (cmd->next)
-	{
-		dup2(fd[1], 1);
-	}
-	if (fd[0] >= 0)
-		close(fd[0]);
-	if (fd[1] >= 0)
-		close(fd[1]);
-	exit(redirect_and_execute(shell, cmd, *pipe_fd));
 }
 
-int	run_pipe(t_shell *shell, t_commands *cmd, int pipe_fd, int *child_exitcode)
+int	wait_for_children(void)
 {
-	int	fd[2];
-	int	pid;
+	int		status;
+	pid_t	pid;
+	int		last_status;
 
-	if (pipe(fd) && cmd->next)
-		return (-1);
-	// printf("fd == [%d][%d]\n", fd[0], fd[1]);
+	last_status = 0;
+	pid = waitpid(-1, &status, 0);
+	while (pid > 0)
+	{
+		if (WIFEXITED(status))
+			last_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			last_status = 128 + WTERMSIG(status);
+			if (WTERMSIG(status) == SIGPIPE)
+				last_status = 0;
+			if (WTERMSIG(status) == SIGINT)
+				ft_putstr_fd("\n", STDERR_FILENO);
+			else if (WTERMSIG(status) == SIGQUIT)
+				signal(SIGQUIT, SIG_IGN);
+		}
+		pid = waitpid(-1, &status, 0);
+	}
+	if (pid == -1 && errno != ECHILD)
+		return (error_handler("fork error", 1));
+	return (last_status);
+}
+
+int	exe_pipe(t_shell *shell, t_commands *cmd, int *prev_p, int *cur_p)
+{
+	pid_t	pid;
+
+	if (cmd->next && pipe(cur_p) == -1)
+	{
+		close_pipe_ends(*prev_p, cur_p, cmd);
+		return (error_handler("pipe error", 1));
+	}
 	pid = fork();
-	if (pid < 0)
+	if (pid == -1)
 	{
-		if (fd[0] >= 0)
-			close(fd[0]);
-		if (fd[1] >= 0)
-			close(fd[1]);
-		if (pipe_fd != 0)
-			close(pipe_fd);
-		close(pipe_fd);
-		return (-1);
+		close_pipe_ends(*prev_p, cur_p, cmd);
+		return (error_handler("fork error", 1));
 	}
-	else if (!pid)
-		execute_child(shell, cmd, fd, &pipe_fd);
-	waitpid(pid, child_exitcode, 0);
-	shell->exitcode = WEXITSTATUS(*child_exitcode);
-	if (pipe_fd != 0)
-		close(pipe_fd);
-	close(fd[1]);
-	return (fd[0]);
+	if (pid == 0)
+	{
+		set_child_redir(*prev_p, cur_p, cmd);
+		if (cmd->builtin)
+			exit(execute_builtin(shell, cmd));
+		execute_external(cmd, shell);
+	}
+	close_pipe_ends(*prev_p, cur_p, cmd);
+	*prev_p = cur_p[0];
+	return (0);
 }
 
-void	execute_pipe(t_shell *shell, t_commands *cmd)
+int	execute_pipes(t_shell *shell)
 {
-	int	pipe_fd;
-	int	child_exitcode;
+	int			prev_pipe_in;
+	int			current_pipe[2];
+	t_commands	*cmd;
 
-	pipe_fd = -1;
+	prev_pipe_in = -1;
+	cmd = shell->com_struct;
 	while (cmd)
 	{
-		pipe_fd = run_pipe(shell, cmd, pipe_fd, &child_exitcode);
+		current_pipe[0] = -1;
+		current_pipe[1] = -1;
+		if (exe_pipe(shell, cmd, &prev_pipe_in, current_pipe))
+			return (1);
 		cmd = cmd->next;
-		if (cmd)
-			handle_redirects(cmd);
 	}
+	shell->exitcode = wait_for_children();
+	return (shell->exitcode);
 }

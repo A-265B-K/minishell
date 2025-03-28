@@ -19,52 +19,70 @@ int	group_quotes(t_token **current, char c)
 	return (0);
 }
 
-int	quote_group(t_token **current, t_lexer_tools *tools, t_token **lex)
+int	quote_group(t_token **current, t_lexer_tools *tools)
 {
-	(void)lex;
 	tools->quote_type = (*current)->c;
-	append_to_buffer(tools, (*current)->c);
+	if (append_to_buffer(tools, (*current)->c))
+		return (1);
 	(*current) = (*current)->next;
 	while ((*current) && group_quotes(&(*current), tools->quote_type))
 	{
-		append_to_buffer(tools, (*current)->c);
+		if (append_to_buffer(tools, (*current)->c))
+			return (1);
 		(*current) = (*current)->next;
 	}
 	if ((*current) && ((*current)->c == tools->quote_type \
 	|| (*current)->c == tools->quote_type))
 	{
-		append_to_buffer(tools, (*current)->c);
+		if (append_to_buffer(tools, (*current)->c))
+			return (1);
 		(*current) = (*current)->next;
 		return (0);
 	}
-	return (1);
+	return (-1);
 }
 
-t_token	*group_tokens(t_token *lexer_input)
+int	build_group(t_token *current, t_token **lex, t_lexer_tools *tools)
+{
+	int	err;
+
+	err = 0;
+	if (current && ft_isspace(current->c))
+		err = fin_tok(lex, tools, O_G_WORD);
+	else if (current && is_f_operator(current->c))
+		err = op_token(lex, &current, tools);
+	else if (current)
+		err = append_to_buffer(tools, current->c);
+	if (err && tools->buffer)
+		free(tools->buffer);
+	return (err);
+}
+
+t_token	*group_tokens(t_token *lexer_input, t_lexer_tools tools, int err)
 {
 	t_token			*lex;
 	t_token			*current;
-	t_lexer_tools	tools;
 
 	current = lexer_input;
 	lex = NULL;
-	init_lexer_tools(&tools);
+	if (init_lexer_tools(&tools))
+		return (NULL);
 	while (current)
 	{
 		if (current->c == '\'' || current->c == '\"')
 		{
-			if (!quote_group(&current, &tools, &lex))
+			err = quote_group(&current, &tools);
+			if (err == 0)
 				continue ;
+			if (err == 1)
+				return (NULL);
 		}
-		if (current && isspace(current->c))
-			finalize_token(&lex, &tools, O_G_WORD);
-		else if (current && is_f_operator(current->c))
-			op_token(&lex, &current, &tools);
-		else if (current)
-			append_to_buffer(&tools, current->c);
+		if (build_group(current, &lex, &tools))
+			return (NULL);
 		current = current->next;
 	}
-	finalize_token(&lex, &tools, O_G_WORD);
-    free (tools.buffer);
+	if (fin_tok(&lex, &tools, O_G_WORD))
+		return (free(tools.buffer), NULL);
+	free(tools.buffer);
 	return (lex);
 }

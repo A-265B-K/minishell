@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 13:35:52 by ahornstr          #+#    #+#             */
-/*   Updated: 2024/12/02 13:36:14 by ahornstr         ###   ########.fr       */
+/*   Updated: 2025/03/27 21:18:12 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*env_get(char *str, char *envp[])
+char	*ft_env_get(char *str, char **envp)
 {
 	int	i;
 	int	length;

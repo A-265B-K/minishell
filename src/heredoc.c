@@ -12,36 +12,13 @@
 
 #include "minishell.h"
 
-char    *create_tempfile(t_shell *shell)
-{
-	char    *str;
-	int     fd;
-
-	str = free_join("/tmp/heredoc", ft_itoa(shell->heredoc_id), 0, 1);
-	fd = open(str, O_CREAT | O_RDWR | O_TRUNC, 0644);
-	if (fd == -1)
-		return (NULL);
-	close(fd);
-	return (str);
-}
-
-int	write_to_tempfile(const char *filename, const char *content)
-{
-	int fd = open(filename, O_WRONLY | O_TRUNC);
-	if (fd == -1)
-		return (error_handler("invalid fd @ write_to_tempfile", 1));
-	write(fd, content, ft_strlen(content));
-	close(fd);
-	return (0);
-}
-
 char	*expand_hd(char *line, t_shell *shell, int quoted, char *content)
 {
 	char	*expanded;
 
 	if (!quoted)
 	{
-		expanded = remove_quotes(line, shell);
+		expanded = expand_quotes(line, shell);
 		if (!expanded)
 			return (NULL);
 		content = free_join(content, expanded, true, false);
@@ -58,7 +35,7 @@ char	*expand_hd(char *line, t_shell *shell, int quoted, char *content)
 	return (content);
 }
 
-static char *read_heredoc_content(const char *lim, int quoted, t_shell *shell)
+static char	*read_heredoc_content(const char *lim, int quoted, t_shell *shell)
 {
 	char	*line;
 	char	*content;
@@ -67,12 +44,14 @@ static char *read_heredoc_content(const char *lim, int quoted, t_shell *shell)
 	content = ft_strdup("");
 	while (1)
 	{
-		if (line)
-			free(line);
+		free(line);
 		line = readline("> ");
 		if (!line)
-			return (NULL);
-		if (ft_strncmp(line, lim, ft_strlen(lim)) == 0 && line[ft_strlen(lim)] == '\0')
+		{
+			return (free(content), NULL);
+		}
+		if (ft_strncmp(line, lim, ft_strlen(lim)) == 0 \
+		&& line[ft_strlen(lim)] == '\0')
 			return (free(line), content);
 		content = expand_hd(line, shell, quoted, content);
 		if (!content)
@@ -86,7 +65,8 @@ static char *read_heredoc_content(const char *lim, int quoted, t_shell *shell)
 
 int	hd_to_cmd(t_commands *cmd, char *file_name)
 {
-	cmd->redirection = realloc(cmd->redirection, sizeof(char *) * (cmd->red_count + 2));
+	cmd->redirection = realloc(cmd->redirection, sizeof(char *) * \
+	(cmd->red_count + 2));
 	if (!cmd->redirection)
 	{
 		free (file_name);
@@ -103,7 +83,7 @@ char	*check_hd_quote(char *lim, t_shell *shell)
 {
 	shell->quoted = 0;
 	if ((lim[0] == '\'' || lim[0] == '"') && \
-		lim[ft_strlen(lim) - 1] == lim[0]) 
+	lim[ft_strlen(lim) - 1] == lim[0])
 	{
 		shell->quoted = 1;
 		lim = ft_substr(lim, 1, ft_strlen(lim) - 2);
@@ -113,12 +93,12 @@ char	*check_hd_quote(char *lim, t_shell *shell)
 	return (lim);
 }
 
-int handle_heredoc(t_commands *cmd, t_token *token, t_shell *shell)
+int	handle_heredoc(t_commands *cmd, t_token *token, t_shell *shell)
 {
 	char	*delimiter;
 	char	*content;
 	char	*file_name;
-	
+
 	delimiter = token->str;
 	delimiter = check_hd_quote(delimiter, shell);
 	if (!delimiter)
@@ -127,15 +107,16 @@ int handle_heredoc(t_commands *cmd, t_token *token, t_shell *shell)
 	if (!file_name)
 		return (free(delimiter), 1);
 	content = read_heredoc_content(delimiter, shell->quoted, shell);
-	if (!content)
-	{
-		free (delimiter);
-		return (free(file_name), 1);
-	}
 	free (delimiter);
+	if (!content)
+		return (free(file_name), 1);
 	if (write_to_tempfile(file_name, content))
+	{
+		free(file_name);
 		return (free(content), 1);
+	}
 	if (hd_to_cmd(cmd, file_name))
-		return (1);
+		return (free(content), 1);
+	free(content);
 	return (0);
 }
