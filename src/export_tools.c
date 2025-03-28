@@ -87,7 +87,7 @@ int	find_var_index(char **envp, char *new_var, int len)
 	i = 0;
 	while (envp[i])
 	{
-		if (strncmp(envp[i], new_var, len) == 0 && envp[i][len] == '=')
+		if (ft_strncmp(envp[i], new_var, len) == 0 && envp[i][len] == '=')
 			return (i);
 		i++;
 	}

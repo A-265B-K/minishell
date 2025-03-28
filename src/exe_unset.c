@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_environ.c                                       :+:      :+:    :+:   */
+/*   exe_unset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 16:14:50 by marvin            #+#    #+#             */
-/*   Updated: 2025/03/27 21:24:17 by marvin           ###   ########.fr       */
+/*   Updated: 2025/03/28 14:22:28 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ft_unsetenv(char **params, t_shell *shell)
 	if (!ft_strncmp(name, "", 1))
 		return (free(name), 0);
 	if (!ft_strncmp(name, "HOME", 4) || !ft_strncmp(name, "PATH", 4) \
-	|| !ft_strncmp(name, "SHELL", 5))
+	|| !ft_strncmp(name, "PWD", 5) || !ft_strncmp(name, "USER", 4))
 		return (free(name), 0);
 	i = find_env_index(name, shell);
 	if (i == -1)

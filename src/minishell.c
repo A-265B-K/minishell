@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   minishell.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: marvin <marvin@student.42.fr>                +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/11/13 12:52:23 by alkuijte      #+#    #+#                 */
-/*   Updated: 2025/03/28 13:09:09 by alkuijte      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahornstr <ahornstr@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/13 12:52:23 by alkuijte          #+#    #+#             */
+/*   Updated: 2025/03/28 14:55:07 by ahornstr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ t_shell	*shell_init(char **envp)
 		return (NULL);
 	shell->envp = alloc_double(envp);
 	if (!shell->envp)
-		return (NULL);
+		return (close_shell(shell), NULL);
 	shell->cur_pwd = ft_env_get("PWD", shell->envp);
 	if (!shell->cur_pwd)
-		return (NULL);
+		return (close_shell(shell), NULL);
 	shell->old_pwd = ft_env_get("OLDPWD", shell->envp);
 	if (!shell->old_pwd)
-		return (NULL);
+		return (close_shell(shell), NULL);
 	shell->exitcode = 0;
 	shell->com_struct = NULL;
 	shell->tokenized = NULL;
@@ -67,8 +67,6 @@ int	run_shell(t_shell *shell)
 		return (1);
 	if (code == 2)
 		return (0);
-	if (ft_strlen(shell->input) > 0)
-		add_history(shell->input);
 	execute(shell);
 	return (0);
 }
@@ -94,6 +92,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (run_shell(shell))
 				break ;
+			if (ft_strlen(shell->input) > 0)
+				add_history(shell->input);
 		}
 	}
 	close_shell(shell);
